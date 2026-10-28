@@ -53,6 +53,14 @@ const authLimiter = rateLimit({
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
 
+// Disable caching for all API endpoints to guarantee instant updates
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
 // API Routes
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth', require('./routes/auth'));

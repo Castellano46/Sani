@@ -205,12 +205,21 @@ window.switchTab = function(tabId) {
     p.classList.toggle('active', p.id === `tab-panel-${tabId}`);
   });
 
-  // Trigger chart resize if entering dashboard
+  // Always refresh latest data when navigating to tabs
   if (tabId === 'dashboard') {
+    loadDashboardStats();
     setTimeout(() => {
       if (adminState.charts.activity) adminState.charts.activity.resize();
       if (adminState.charts.categories) adminState.charts.categories.resize();
     }, 100);
+  } else if (tabId === 'opiniones') {
+    loadReviewsTab();
+  } else if (tabId === 'galeria') {
+    loadGalleryTab();
+  } else if (tabId === 'servicios') {
+    loadServicesTab();
+  } else if (tabId === 'personalizacion') {
+    loadSettingsTab();
   }
 };
 
@@ -344,112 +353,117 @@ function renderCharts(stats) {
   const ctxActivity = document.getElementById('chart-activity-trends');
   const ctxCategories = document.getElementById('chart-categories');
 
-  if (typeof Chart !== 'undefined') {
-    // 1. Activity Trends Chart
-    if (ctxActivity) {
-      if (adminState.charts.activity) {
-        adminState.charts.activity.destroy();
-      }
+  try {
+    if (typeof Chart !== 'undefined') {
+      // 1. Activity Trends Chart
+      if (ctxActivity) {
+        if (adminState.charts.activity) {
+          try { adminState.charts.activity.destroy(); } catch (e) {}
+        }
 
-      const trends = stats.monthlyTrends || {
-        labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
-        visits: [320, 480, 610, 540, 720, 890],
-        whatsappContacts: [18, 29, 41, 35, 52, 68]
-      };
+        const trends = stats.monthlyTrends || {
+          labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
+          visits: [320, 480, 610, 540, 720, 890],
+          whatsappContacts: [18, 29, 41, 35, 52, 68]
+        };
 
-      adminState.charts.activity = new Chart(ctxActivity, {
-        type: 'line',
-        data: {
-          labels: trends.labels,
-          datasets: [
-            {
-              label: 'Visitas a la Web',
-              data: trends.visits,
-              borderColor: '#0284c7',
-              backgroundColor: 'rgba(2, 132, 199, 0.1)',
-              borderWidth: 2.5,
-              tension: 0.4,
-              fill: true,
-              yAxisID: 'y'
-            },
-            {
-              label: 'Contactos por WhatsApp / Teléfono',
-              data: trends.whatsappContacts,
-              borderColor: '#eab308',
-              backgroundColor: 'rgba(234, 179, 8, 0.15)',
-              borderWidth: 2.5,
-              tension: 0.4,
-              fill: true,
-              yAxisID: 'y1'
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { position: 'top', labels: { font: { family: 'Outfit', size: 12 } } }
+        adminState.charts.activity = new Chart(ctxActivity, {
+          type: 'line',
+          data: {
+            labels: trends.labels,
+            datasets: [
+              {
+                label: 'Visitas a la Web',
+                data: trends.visits,
+                borderColor: '#0284c7',
+                backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: true,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Contactos por WhatsApp / Teléfono',
+                data: trends.whatsappContacts,
+                borderColor: '#eab308',
+                backgroundColor: 'rgba(234, 179, 8, 0.15)',
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: true,
+                yAxisID: 'y1'
+              }
+            ]
           },
-          scales: {
-            y: {
-              type: 'linear',
-              display: true,
-              position: 'left',
-              title: { display: true, text: 'Visitas' }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { position: 'top', labels: { font: { family: 'Outfit', size: 12 } } }
             },
-            y1: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              title: { display: true, text: 'Contactos' },
-              grid: { drawOnChartArea: false }
+            scales: {
+              y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: { display: true, text: 'Visitas' }
+              },
+              y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: { display: true, text: 'Contactos' },
+                grid: { drawOnChartArea: false }
+              }
             }
           }
-        }
-      });
-    }
-
-    // 2. Categories Doughnut Chart
-    if (ctxCategories) {
-      if (adminState.charts.categories) {
-        adminState.charts.categories.destroy();
+        });
       }
 
-      const catData = stats.worksByCategory || {
-        electricidad: 2,
-        fontaneria: 2,
-        suelo_radiante: 2,
-        otro: 0
-      };
-
-      adminState.charts.categories = new Chart(ctxCategories, {
-        type: 'doughnut',
-        data: {
-          labels: ['Electricidad ⚡', 'Fontanería 💧', 'Suelo Radiante ♨️', 'Otras Instalaciones 🔧'],
-          datasets: [{
-            data: [
-              catData.electricidad || 1,
-              catData.fontaneria || 1,
-              catData.suelo_radiante || 1,
-              catData.otro || 0
-            ],
-            backgroundColor: ['#0284c7', '#38bdf8', '#f59e0b', '#64748b'],
-            borderWidth: 2,
-            borderColor: '#ffffff'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Outfit', size: 11 } } }
-          }
+      // 2. Categories Doughnut Chart
+      if (ctxCategories) {
+        if (adminState.charts.categories) {
+          try { adminState.charts.categories.destroy(); } catch (e) {}
         }
-      });
+
+        const catData = stats.worksByCategory || {
+          electricidad: 2,
+          fontaneria: 2,
+          suelo_radiante: 2,
+          otro: 0
+        };
+
+        adminState.charts.categories = new Chart(ctxCategories, {
+          type: 'doughnut',
+          data: {
+            labels: ['Electricidad ⚡', 'Fontanería 💧', 'Suelo Radiante ♨️', 'Otras Instalaciones 🔧'],
+            datasets: [{
+              data: [
+                catData.electricidad || 1,
+                catData.fontaneria || 1,
+                catData.suelo_radiante || 1,
+                catData.otro || 0
+              ],
+              backgroundColor: ['#0284c7', '#38bdf8', '#f59e0b', '#64748b'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Outfit', size: 11 } } }
+            }
+          }
+        });
+      }
+    } else {
+      drawCanvasFallback(ctxActivity, 'Evolución de Actividad Mensual');
+      drawCanvasFallback(ctxCategories, 'Distribución de Trabajos');
     }
-  } else {
-    // Canvas Fallback if Chart.js is not loaded
+  } catch (chartErr) {
+    console.warn('Chart render fallback triggered:', chartErr);
     drawCanvasFallback(ctxActivity, 'Evolución de Actividad Mensual');
     drawCanvasFallback(ctxCategories, 'Distribución de Trabajos');
   }
@@ -594,6 +608,7 @@ async function loadReviewsTab(statusFilter = adminState.currentReviewFilter) {
             <div class="action-btns-group">
               ${r.status !== 'approved' ? `<button class="btn-table-action btn-approve" onclick="updateReviewStatus(${r.id}, 'approved')" title="Aprobar para que aparezca en la web">✓ Aprobar</button>` : ''}
               ${r.status !== 'hidden' ? `<button class="btn-table-action btn-hide" onclick="updateReviewStatus(${r.id}, 'hidden')" title="Ocultar de la web sin borrar">👁️ Ocultar</button>` : ''}
+              ${r.status !== 'pending' ? `<button class="btn-table-action btn-pending-action" onclick="updateReviewStatus(${r.id}, 'pending')" title="Mover a pendientes">⏳ Pendiente</button>` : ''}
               <button class="btn-table-action btn-delete" onclick="deleteReview(${r.id})" title="Eliminar permanentemente">🗑️ Eliminar</button>
             </div>
           </td>
@@ -1029,7 +1044,7 @@ function initSettingsForm() {
         if (el.type === 'checkbox') {
           payload[el.name] = el.checked ? '1' : '0';
         } else {
-          payload[el.name] = el.value.trim();
+          payload[el.name] = (el.value !== undefined && el.value !== null ? String(el.value) : '').trim();
         }
       }
     }

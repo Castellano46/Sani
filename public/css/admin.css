@@ -654,6 +654,9 @@ h1, h2, h3, h4, h5, h6 {
 .btn-hide { background: #fef3c7; color: #b45309; }
 .btn-hide:hover { background: #fde68a; }
 
+.btn-pending-action { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+.btn-pending-action:hover { background: #ffedd5; }
+
 .btn-edit { background: #e0f2fe; color: #0369a1; }
 .btn-edit:hover { background: #bae6fd; }
 

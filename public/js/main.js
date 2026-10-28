@@ -140,6 +140,11 @@ function applySettingsToDOM(settings) {
     el.textContent = settings.address || 'Recinto Ferial, Jamilena, Jaén (España)';
   });
 
+  // Apply schedule notice if configured
+  if (settings.schedule_notice) {
+    document.querySelectorAll('.schedule-val').forEach(el => el.textContent = settings.schedule_notice);
+  }
+
   // Dynamic Map update if coordinates provided
   if (settings.map_lat && settings.map_lng) {
     const mapIframe = document.querySelector('#map-view iframe');
@@ -187,7 +192,6 @@ function applySettingsToDOM(settings) {
   } else {
     const banner = document.getElementById('site-urgent-banner');
     if (banner) banner.style.display = 'none';
-  }
   }
 
   // Email contact card
