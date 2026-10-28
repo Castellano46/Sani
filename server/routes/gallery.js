@@ -4,8 +4,55 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
+
+// Configure Cloudinary if credentials are present
+const isCloudinaryConfigured = Boolean(
+  process.env.CLOUDINARY_URL ||
+  (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET)
+);
+
+if (isCloudinaryConfigured) {
+  if (process.env.CLOUDINARY_URL) {
+    cloudinary.config();
+  } else {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true
+    });
+  }
+}
+
+// Helper to upload image to Cloudinary (or keep on disk if not configured)
+async function processUploadedImage(file) {
+  if (!file) return '';
+
+  if (isCloudinaryConfigured) {
+    try {
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: 'sani-instalaciones/galeria',
+        resource_type: 'image',
+        transformation: [
+          { quality: 'auto', fetch_format: 'auto' }
+        ]
+      });
+      // Clean up local temp file after cloud upload
+      if (fs.existsSync(file.path)) {
+        try { fs.unlinkSync(file.path); } catch (e) { /* ignore */ }
+      }
+      return result.secure_url;
+    } catch (uploadErr) {
+      console.error('Error uploading to Cloudinary, falling back to local file:', uploadErr);
+      return `/uploads/${file.filename}`;
+    }
+  }
+
+  return `/uploads/${file.filename}`;
+}
 
 // Configure Multer storage
 const uploadsDir = path.join(__dirname, '..', '..', 'public', 'uploads');
@@ -114,7 +161,7 @@ router.get('/all', requireAuth, (req, res) => {
 
 // POST /api/gallery (Admin only: upload and create work)
 router.post('/', requireAuth, (req, res) => {
-  upload.single('image')(req, res, (err) => {
+  upload.single('image')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ error: err.message || 'Error al procesar la imagen.' });
     }
@@ -130,7 +177,7 @@ router.post('/', requireAuth, (req, res) => {
 
     let finalImageUrl = '';
     if (req.file) {
-      finalImageUrl = `/uploads/${req.file.filename}`;
+      finalImageUrl = await processUploadedImage(req.file);
     } else if (image_url && image_url.trim()) {
       finalImageUrl = image_url.trim();
     } else {
@@ -203,7 +250,7 @@ router.put('/:id/status', requireAuth, (req, res) => {
 
 // PUT /api/gallery/:id (Admin only: update info or replace photo)
 router.put('/:id', requireAuth, (req, res) => {
-  upload.single('image')(req, res, (err) => {
+  upload.single('image')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ error: err.message || 'Error al procesar la imagen.' });
     }
@@ -229,8 +276,8 @@ router.put('/:id', requireAuth, (req, res) => {
 
       let newImageUrl = existing.image_url;
       if (req.file) {
-        newImageUrl = `/uploads/${req.file.filename}`;
-        // Optionally remove old file if uploaded previously
+        newImageUrl = await processUploadedImage(req.file);
+        // Optionally remove old file if uploaded previously locally
         if (existing.image_url && existing.image_url.startsWith('/uploads/obra-')) {
           const oldPath = path.join(__dirname, '..', '..', 'public', existing.image_url);
           if (fs.existsSync(oldPath)) {
