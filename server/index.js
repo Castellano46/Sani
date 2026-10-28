@@ -17,11 +17,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com", "https://cdn.jsdelivr.net"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "blob:", "https://*.tile.openstreetmap.org", "https://*.openstreetmap.org", "https://unpkg.com", "https://maps.gstatic.com", "https://*.google.com"],
-      connectSrc: ["'self'", "https://*.openstreetmap.org", "https://unpkg.com"],
+      connectSrc: ["'self'", "https://*.openstreetmap.org", "https://unpkg.com", "https://cdn.jsdelivr.net"],
       frameSrc: ["'self'", "https://www.google.com", "https://maps.google.com", "https://www.openstreetmap.org", "https://*.openstreetmap.org"],
       objectSrc: ["'none'"]
     }

@@ -123,16 +123,39 @@ function applySettingsToDOM(settings) {
   const phone = settings.phone || '671 72 80 43';
   const phoneRaw = settings.phone_raw || '671728043';
 
+  // Apply custom brand colors if configured
+  if (settings.primary_color) {
+    document.documentElement.style.setProperty('--color-brand-blue', settings.primary_color);
+  }
+  if (settings.accent_color) {
+    document.documentElement.style.setProperty('--color-accent-yellow', settings.accent_color);
+  }
+
   // Apply phone numbers to buttons and tel: links
   document.querySelectorAll('.phone-val').forEach(el => el.textContent = phone);
   document.querySelectorAll('.phone-tel-link').forEach(el => el.href = `tel:${phoneRaw}`);
 
   // Apply location strings
   document.querySelectorAll('.location-val').forEach(el => {
-    el.textContent = settings.address || 'Jamilena, Jaén (España)';
+    el.textContent = settings.address || 'Recinto Ferial, Jamilena, Jaén (España)';
   });
 
-  // Hero title and subtitles if customized in settings
+  // Dynamic Map update if coordinates provided
+  if (settings.map_lat && settings.map_lng) {
+    const mapIframe = document.querySelector('#map-view iframe');
+    if (mapIframe) {
+      const lat = parseFloat(settings.map_lat);
+      const lng = parseFloat(settings.map_lng);
+      const bbox = `${(lng - 0.004).toFixed(4)}%2C${(lat - 0.0025).toFixed(4)}%2C${(lng + 0.004).toFixed(4)}%2C${(lat + 0.0025).toFixed(4)}`;
+      mapIframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lng}`;
+    }
+  }
+
+  // Hero title, subtitle and badge if customized
+  if (settings.hero_badge) {
+    const heroBadgeEl = document.querySelector('.hero-badge-pill');
+    if (heroBadgeEl) heroBadgeEl.textContent = settings.hero_badge;
+  }
   if (settings.hero_title) {
     const heroTitleEl = document.getElementById('hero-title-text');
     if (heroTitleEl) heroTitleEl.innerHTML = formatHeroTitle(settings.hero_title);
@@ -148,6 +171,23 @@ function applySettingsToDOM(settings) {
   if (settings.about_text) {
     const aboutBodyEl = document.getElementById('about-body-text');
     if (aboutBodyEl) aboutBodyEl.textContent = settings.about_text;
+  }
+
+  // Announcement / Emergency Banner
+  if (settings.banner_active === '1' && settings.banner_text) {
+    let banner = document.getElementById('site-urgent-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'site-urgent-banner';
+      banner.className = 'urgent-announcement-banner';
+      document.body.prepend(banner);
+    }
+    banner.innerHTML = `<span style="margin-right: 0.5rem;">🔔</span> ${settings.banner_text}`;
+    banner.style.display = 'block';
+  } else {
+    const banner = document.getElementById('site-urgent-banner');
+    if (banner) banner.style.display = 'none';
+  }
   }
 
   // Email contact card
@@ -210,7 +250,9 @@ function renderServices(services, container) {
     zap: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
     droplet: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>`,
     flame: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`,
-    wrench: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`
+    wrench: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`,
+    shield: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+    home: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`
   };
 
   const featureHighlights = {
@@ -229,6 +271,16 @@ function renderServices(services, container) {
       'Placas de aislamiento térmico de alta densidad',
       'Regulación digital independiente por estancias'
     ],
+    climatizacion: [
+      'Sistemas de climatización de alta eficiencia',
+      'Instalación técnica certificada y purga',
+      'Ahorro en factura energética y máximo confort'
+    ],
+    reformas: [
+      'Instalaciones completas para cocina y baños',
+      'Coordinación de trabajos y limpieza rigurosa',
+      'Garantía total de materiales y mano de obra'
+    ],
     otro: [
       'Asesoramiento técnico personalizado',
       'Materiales certificados con marcado CE',
@@ -240,6 +292,8 @@ function renderServices(services, container) {
     electricidad: '⚡ Alta Demanda · Obra y Reforma',
     fontaneria: '💧 Redes Homologadas & Averías',
     suelo_radiante: '♨️ Confort Térmico & Ahorro',
+    climatizacion: '❄️ Climatización Eficiente',
+    reformas: '🏠 Reformas Integrales',
     otro: '🔧 Instalación Profesional'
   };
 

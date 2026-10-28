@@ -51,9 +51,17 @@ function initDatabase() {
       description TEXT,
       image_url TEXT NOT NULL,
       display_order INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'approved', -- 'approved', 'hidden', 'pending'
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
+
+  // Migration: add status column to gallery if missing in existing table
+  const galleryCols = db.prepare('PRAGMA table_info(gallery)').all();
+  if (!galleryCols.some(c => c.name === 'status')) {
+    db.exec("ALTER TABLE gallery ADD COLUMN status TEXT DEFAULT 'approved'");
+    console.log('[DB] Migrated gallery table: added status column.');
+  }
 
   // 4. Reviews table
   db.exec(`
@@ -109,9 +117,10 @@ function initDatabase() {
     city: 'Jamilena',
     province: 'Jaén',
     country: 'España',
-    address: 'Jamilena, Jaén (España)',
-    map_lat: '37.7475',
-    map_lng: '-3.9125',
+    address: 'Recinto Ferial, Jamilena, Jaén (España)',
+    map_lat: '37.74603',
+    map_lng: '-3.91060',
+    hero_badge: 'Instalador Homologado en Jamilena (Jaén)',
     hero_title: 'Instalaciones Profesionales de Confianza',
     hero_subtitle: 'Especialistas en electricidad, fontanería y suelo radiante en Jamilena y toda la provincia de Jaén. Compromiso, calidad y cercanía.',
     about_intro: 'En Sani Instalaciones ofrecemos servicios integrales de máxima calidad técnica para viviendas, comercios y reformas en Jamilena y comarca.',
@@ -120,7 +129,12 @@ function initDatabase() {
     social_instagram: '',
     social_facebook_active: '0',
     social_instagram_active: '0',
-    schedule_notice: 'Atención telefónica y urgencias de lunes a viernes'
+    schedule_notice: 'Atención telefónica y urgencias de lunes a viernes',
+    banner_active: '0',
+    banner_text: 'Servicio de urgencias técnicas disponible. Atención rápida en Jamilena y comarca.',
+    primary_color: '#004b93',
+    accent_color: '#eab308',
+    google_reviews_url: ''
   };
 
   const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
@@ -130,6 +144,17 @@ function initDatabase() {
     }
   });
   setMany(defaultSettings);
+
+  // Update location settings to Recinto Ferial de Jamilena
+  db.prepare(`
+    UPDATE settings SET value = ? WHERE key = 'address' AND (value = 'Jamilena, Jaén (España)' OR value = '')
+  `).run('Recinto Ferial, Jamilena, Jaén (España)');
+  db.prepare(`
+    UPDATE settings SET value = ? WHERE key = 'map_lat' AND (value = '37.7475' OR value = '')
+  `).run('37.74603');
+  db.prepare(`
+    UPDATE settings SET value = ? WHERE key = 'map_lng' AND (value = '-3.9125' OR value = '')
+  `).run('-3.91060');
 
   // Seed verified services if table empty
   const servicesCount = db.prepare('SELECT COUNT(*) as count FROM services').get().count;

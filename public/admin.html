@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Administración | Sani Instalaciones</title>
+  <title>Panel de Administración Profesional | Sani Instalaciones</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="/img/logo.png">
   <link rel="stylesheet" href="/css/variables.css">
@@ -17,20 +17,22 @@
        ========================================================================== -->
   <div id="admin-login-wrapper" class="admin-login-wrapper">
     <div class="login-card">
-      <img src="/img/logo.png" alt="Sani Instalaciones" class="login-brand-logo">
-      <h1 class="login-title">Panel de Gestión</h1>
-      <p class="login-subtitle">Acceso exclusivo para el administrador de Sani Instalaciones</p>
+      <div class="login-brand-wrapper">
+        <img src="/img/logo.png" alt="Sani Instalaciones" class="login-brand-logo">
+      </div>
+      <h1 class="login-title">Panel de Control</h1>
+      <p class="login-subtitle">Gestión integral y personalización web para Sani Instalaciones</p>
 
-      <div id="login-alert" class="alert alert-error"></div>
+      <div id="login-alert" class="alert alert-error" style="display: none;"></div>
 
       <form id="admin-login-form">
         <div class="form-group" style="text-align: left;">
-          <label class="form-label" for="login-username">Usuario</label>
-          <input type="text" id="login-username" name="username" class="form-input" required autocomplete="username" placeholder="Nombre de usuario">
+          <label class="form-label" for="login-username">Usuario Administrador</label>
+          <input type="text" id="login-username" name="username" class="form-input" required autocomplete="username" placeholder="Usuario">
         </div>
 
         <div class="form-group" style="text-align: left;">
-          <label class="form-label" for="login-password">Contraseña</label>
+          <label class="form-label" for="login-password">Contraseña de Seguridad</label>
           <input type="password" id="login-password" name="password" class="form-input" required autocomplete="current-password" placeholder="••••••••">
         </div>
 
@@ -39,7 +41,7 @@
         </button>
       </form>
 
-      <div style="margin-top: 1.5rem;">
+      <div style="margin-top: 1.5rem; text-align: center;">
         <a href="/" style="font-size: 0.85rem; color: var(--color-text-muted); text-decoration: underline;">← Volver a la web pública</a>
       </div>
     </div>
@@ -52,178 +54,317 @@
     <!-- Top Header -->
     <header class="admin-header">
       <div class="admin-header-brand">
-        <img src="/img/logo.png" alt="Logo">
-        <span>Sani Instalaciones <span style="font-size: 0.8rem; font-weight: normal; color: var(--color-accent-yellow);">| Panel Privado</span></span>
+        <img src="/img/logo.png" alt="Logo Sani" style="height: 38px; width: auto; object-fit: contain;">
+        <div class="admin-header-titles">
+          <span class="brand-title">Sani Instalaciones</span>
+          <span class="brand-status-pill">
+            <span class="status-dot-pulse"></span> Sistema en línea
+          </span>
+        </div>
       </div>
 
       <div class="admin-user-nav">
-        <a href="/" target="_blank" rel="noopener" class="btn btn-sm btn-outline" style="border-radius: var(--radius-sm); font-size: 0.8rem;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        <a href="/" target="_blank" rel="noopener" class="btn btn-sm btn-outline-light">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           Ver Web Pública
         </a>
-        <span class="admin-badge">👤 <span id="admin-display-username">admin</span></span>
-        <button id="btn-admin-logout" class="btn-admin-logout">Cerrar Sesión</button>
+        <div class="admin-badge">
+          <span>👤 Administrador: <strong id="admin-display-username">admin</strong></span>
+        </div>
+        <button id="btn-admin-logout" class="btn-admin-logout" title="Cerrar sesión actual">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Cerrar Sesión
+        </button>
       </div>
     </header>
 
     <div class="admin-main-container">
       <!-- Sidebar Navigation -->
       <aside class="admin-sidebar">
+        <div class="sidebar-section-title">NAVEGACIÓN PRINCIPAL</div>
         <button class="sidebar-tab-btn active" data-tab="dashboard">
-          <span class="tab-label">📊 Resumen</span>
+          <span class="tab-icon">📊</span>
+          <span class="tab-label">Panel de Control</span>
         </button>
         <button class="sidebar-tab-btn" data-tab="opiniones">
-          <span class="tab-label">💬 Opiniones</span>
-          <span class="tab-counter" id="sidebar-pending-badge" style="display: none;">0</span>
+          <span class="tab-icon">💬</span>
+          <span class="tab-label">Opiniones</span>
+          <span class="tab-counter badge-urgent" id="sidebar-pending-badge" style="display: none;">0</span>
         </button>
         <button class="sidebar-tab-btn" data-tab="galeria">
-          <span class="tab-label">🖼️ Galería de Trabajos</span>
+          <span class="tab-icon">🖼️</span>
+          <span class="tab-label">Publicaciones / Obras</span>
+          <span class="tab-counter" id="sidebar-works-badge">0</span>
         </button>
         <button class="sidebar-tab-btn" data-tab="servicios">
-          <span class="tab-label">⚡ Servicios</span>
+          <span class="tab-icon">⚡</span>
+          <span class="tab-label">Servicios</span>
+          <span class="tab-counter" id="sidebar-services-badge">0</span>
         </button>
-        <button class="sidebar-tab-btn" data-tab="contacto">
-          <span class="tab-label">⚙️ Datos y Contenido</span>
+
+        <div class="sidebar-section-title" style="margin-top: 1.5rem;">CONFIGURACIÓN WEB</div>
+        <button class="sidebar-tab-btn" data-tab="personalizacion">
+          <span class="tab-icon">🎨</span>
+          <span class="tab-label">Personalizar Web</span>
         </button>
         <button class="sidebar-tab-btn" data-tab="seguridad">
-          <span class="tab-label">🔒 Seguridad</span>
+          <span class="tab-icon">🔒</span>
+          <span class="tab-label">Seguridad y Acceso</span>
         </button>
       </aside>
 
       <!-- Content Area -->
       <main class="admin-content-area">
 
-        <!-- ==========================================
-             Tab 1: Dashboard / Resumen
-             ========================================== -->
+        <!-- ==================================================================
+             TAB 1: PANEL DE CONTROL / DASHBOARD CON GRÁFICOS Y ACCIONES RÁPIDAS
+             ================================================================== -->
         <div id="tab-panel-dashboard" class="tab-panel active">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Resumen de Actividad</h2>
-              <p class="panel-desc">Estado general de la web de Sani Instalaciones</p>
+              <h2 class="panel-title">Panel de Control y Métricas</h2>
+              <p class="panel-desc">Resumen en tiempo real del estado de la web, actividad de clientes y control rápido</p>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-outline-primary" onclick="refreshDashboard()">
+                🔄 Actualizar Datos
+              </button>
             </div>
           </div>
 
-          <!-- Metrics Cards -->
-          <div class="metrics-grid">
-            <div class="metric-card" onclick="switchTab('opiniones')" style="cursor: pointer;">
-              <div class="metric-icon-box metric-pending">⏳</div>
+          <!-- Pending Alert Banner if any reviews need moderation -->
+          <div id="dashboard-urgent-alert" class="dashboard-banner-alert" style="display: none;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-size: 1.5rem;">⚠️</span>
               <div>
+                <strong>Tienes opiniones de clientes pendientes de moderación.</strong>
+                <p style="font-size: 0.85rem; margin-top: 2px;">Debes aprobarlas u ocultarlas para que se muestren en la web pública.</p>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="switchTab('opiniones')">Moderar Ahora</button>
+          </div>
+
+          <!-- KPI Cards Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card" onclick="switchTab('opiniones')" style="cursor: pointer;" title="Haz clic para ver opiniones">
+              <div class="metric-icon-box metric-pending">⏳</div>
+              <div class="metric-content">
                 <div class="metric-val" id="stat-pending-reviews">0</div>
                 <div class="metric-lbl">Opiniones Pendientes</div>
+                <div class="metric-trend text-warning" id="stat-pending-trend">Requieren revisión</div>
               </div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card" onclick="switchTab('opiniones')" style="cursor: pointer;" title="Haz clic para ver opiniones">
               <div class="metric-icon-box metric-reviews">⭐</div>
-              <div>
+              <div class="metric-content">
                 <div class="metric-val" id="stat-total-reviews">0</div>
-                <div class="metric-lbl">Opiniones Publicadas</div>
+                <div class="metric-lbl">Opiniones Aprobadas</div>
+                <div class="metric-trend text-success" id="stat-rating-badge">Media: 5.0 / 5 ★</div>
               </div>
             </div>
 
-            <div class="metric-card" onclick="switchTab('galeria')" style="cursor: pointer;">
+            <div class="metric-card" onclick="switchTab('galeria')" style="cursor: pointer;" title="Haz clic para gestionar galería">
               <div class="metric-icon-box metric-gallery">📷</div>
-              <div>
+              <div class="metric-content">
                 <div class="metric-val" id="stat-total-works">0</div>
                 <div class="metric-lbl">Trabajos en Galería</div>
+                <div class="metric-trend text-info" id="stat-works-detail">Activas en la web</div>
               </div>
             </div>
 
-            <div class="metric-card" onclick="switchTab('servicios')" style="cursor: pointer;">
+            <div class="metric-card" onclick="switchTab('servicios')" style="cursor: pointer;" title="Haz clic para gestionar servicios">
               <div class="metric-icon-box metric-services">🔧</div>
-              <div>
+              <div class="metric-content">
                 <div class="metric-val" id="stat-active-services">0</div>
                 <div class="metric-lbl">Servicios Activos</div>
+                <div class="metric-trend text-primary">Electricidad, fontanería, etc.</div>
               </div>
             </div>
           </div>
 
-          <div class="admin-card">
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1rem;">
-              Acciones Rápidas
-            </h3>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <button class="btn btn-primary btn-sm" onclick="switchTab('opiniones')">
-                Moderar Opiniones
-              </button>
-              <button class="btn btn-outline-dark btn-sm" onclick="switchTab('galeria')">
-                Subir Nueva Fotografía
-              </button>
-              <button class="btn btn-outline-dark btn-sm" onclick="switchTab('contacto')">
-                Modificar Teléfono o Correo
-              </button>
+          <!-- ==============================================================
+               ACCIONES RÁPIDAS 100% FUNCIONALES
+               ============================================================== -->
+          <div class="admin-card quick-actions-card">
+            <div class="card-header-flex">
+              <div>
+                <h3 class="card-section-title">⚡ Acciones Rápidas del Administrador</h3>
+                <p class="card-section-subtitle">Modifica datos clave y avisos al instante sin necesidad de cambiar de pestaña</p>
+              </div>
+              <div class="quick-action-shortcuts">
+                <button class="btn btn-sm btn-primary" onclick="openAddGalleryModal()">+ Nueva Foto</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="openAddServiceModal()">+ Nuevo Servicio</button>
+                <button class="btn btn-sm btn-outline-dark" onclick="openAddReviewModal()">+ Nueva Opinión</button>
+              </div>
+            </div>
+
+            <div class="quick-actions-grid">
+              <!-- Quick Contact Modifier -->
+              <div class="quick-action-box">
+                <h4 class="quick-box-title">📞 Contacto Directo Inmediato</h4>
+                <p class="quick-box-desc">Actualiza el teléfono, WhatsApp y email visibles en toda la web:</p>
+                <form id="form-quick-contact" class="quick-form-compact">
+                  <div class="form-group-compact">
+                    <label>Teléfono Visible:</label>
+                    <input type="text" id="quick-phone" name="phone" class="form-input form-input-sm" placeholder="671 72 80 43" required>
+                  </div>
+                  <div class="form-group-compact">
+                    <label>WhatsApp (con prefijo 34):</label>
+                    <input type="text" id="quick-whatsapp" name="whatsapp" class="form-input form-input-sm" placeholder="34671728043" required>
+                  </div>
+                  <div class="form-group-compact">
+                    <label>Email de Contacto:</label>
+                    <input type="email" id="quick-email" name="email" class="form-input form-input-sm" placeholder="correo@ejemplo.com">
+                  </div>
+                  <button type="submit" id="btn-save-quick-contact" class="btn btn-primary btn-sm" style="margin-top: 0.5rem; width: 100%;">
+                    💾 Guardar Contacto Inmediatamente
+                  </button>
+                </form>
+              </div>
+
+              <!-- Quick Announcement / Urgent Banner Modifier -->
+              <div class="quick-action-box">
+                <h4 class="quick-box-title">🔔 Aviso de Portada / Banner Urgente</h4>
+                <p class="quick-box-desc">Muestra un mensaje destacado en la cabecera (urgencias, festivos, avisos):</p>
+                <form id="form-quick-banner" class="quick-form-compact">
+                  <div class="form-group-compact" style="margin-bottom: 0.6rem;">
+                    <label class="switch-toggle-label">
+                      <input type="checkbox" id="quick-banner-active" name="banner_active">
+                      <span class="switch-toggle-text"><strong>Activar Banner Superior en la Web</strong></span>
+                    </label>
+                  </div>
+                  <div class="form-group-compact">
+                    <label>Texto del Aviso:</label>
+                    <textarea id="quick-banner-text" name="banner_text" class="form-textarea form-textarea-sm" placeholder="Ej. Servicio de averías urgentes disponible 24h en Jamilena y comarca"></textarea>
+                  </div>
+                  <button type="submit" id="btn-save-quick-banner" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem; width: 100%;">
+                    📢 Actualizar Aviso en Portada
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
+
+          <!-- ==============================================================
+               GRÁFICOS PROFESIONALES DE ANALÍTICA (Chart.js + Canvas Fallback)
+               ============================================================== -->
+          <div class="charts-grid">
+            <!-- Line Chart: Activity & Contacts -->
+            <div class="admin-card chart-card">
+              <div class="card-header-flex">
+                <div>
+                  <h3 class="card-section-title">📈 Actividad Estimada y Contactos por WhatsApp</h3>
+                  <p class="card-section-subtitle">Evolución de interacciones y solicitudes de presupuesto en los últimos meses</p>
+                </div>
+                <span class="badge-blue-pill">Mensual</span>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="chart-activity-trends" height="230"></canvas>
+              </div>
+            </div>
+
+            <!-- Doughnut Chart: Categories Distribution -->
+            <div class="admin-card chart-card">
+              <div class="card-header-flex">
+                <div>
+                  <h3 class="card-section-title">📊 Trabajos por Especialidad</h3>
+                  <p class="card-section-subtitle">Distribución de instalaciones en galería</p>
+                </div>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="chart-categories" height="230"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity Table / Feed -->
+          <div class="admin-card">
+            <h3 class="card-section-title" style="margin-bottom: 0.85rem;">🕒 Actividad Reciente en el Sistema</h3>
+            <div class="recent-activity-container" id="recent-activity-feed">
+              <p style="color: #64748b; font-size: 0.9rem;">Cargando actividad reciente...</p>
+            </div>
+          </div>
+
         </div>
 
-        <!-- ==========================================
-             Tab 2: Opiniones y Moderación
-             ========================================== -->
+        <!-- ==================================================================
+             TAB 2: OPINIONES Y MODERACIÓN
+             ================================================================== -->
         <div id="tab-panel-opiniones" class="tab-panel">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Moderación de Opiniones</h2>
-              <p class="panel-desc">Revisa y aprueba los comentarios enviados por los clientes antes de que aparezcan en la web</p>
+              <h2 class="panel-title">Moderación de Opiniones de Clientes</h2>
+              <p class="panel-desc">Revisa, aprueba, oculta o elimina las valoraciones de los clientes antes de mostrarlas públicamente</p>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-sm" onclick="openAddReviewModal()">
+                + Añadir Opinión Manualmente
+              </button>
             </div>
           </div>
 
           <div class="gallery-filters" style="justify-content: flex-start; margin-bottom: 1.5rem;">
-            <button class="filter-btn review-filter-btn active" id="filter-btn-all" onclick="filterAdminReviews('', this)">Todas</button>
-            <button class="filter-btn review-filter-btn" id="filter-btn-pending" onclick="filterAdminReviews('pending', this)">Pendientes</button>
-            <button class="filter-btn review-filter-btn" id="filter-btn-approved" onclick="filterAdminReviews('approved', this)">Aprobadas</button>
-            <button class="filter-btn review-filter-btn" id="filter-btn-hidden" onclick="filterAdminReviews('hidden', this)">Ocultas</button>
+            <button class="filter-btn review-filter-btn active" id="filter-btn-all" onclick="filterAdminReviews('', this)">Todas (0)</button>
+            <button class="filter-btn review-filter-btn" id="filter-btn-pending" onclick="filterAdminReviews('pending', this)">Pendientes (0)</button>
+            <button class="filter-btn review-filter-btn" id="filter-btn-approved" onclick="filterAdminReviews('approved', this)">Aprobadas (0)</button>
+            <button class="filter-btn review-filter-btn" id="filter-btn-hidden" onclick="filterAdminReviews('hidden', this)">Ocultas (0)</button>
           </div>
 
-          <div class="admin-card" style="padding: 1rem; overflow-x: auto;">
+          <div class="admin-card table-responsive-card">
             <table class="admin-table">
               <thead>
                 <tr>
                   <th>Cliente</th>
-                  <th>Estrellas</th>
+                  <th>Puntuación</th>
                   <th>Comentario</th>
                   <th>Fecha</th>
                   <th>Estado</th>
-                  <th>Acciones</th>
+                  <th style="min-width: 190px;">Acciones de Moderación</th>
                 </tr>
               </thead>
               <tbody id="admin-reviews-tbody">
-                <!-- Loaded via JS -->
+                <tr><td colspan="6" style="text-align: center; padding: 2rem;">Cargando opiniones...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- ==========================================
-             Tab 3: Galería de Trabajos
-             ========================================== -->
+        <!-- ==================================================================
+             TAB 3: PUBLICACIONES / GALERÍA DE TRABAJOS (APROBAR, OCULTAR, ELIMINAR)
+             ================================================================== -->
         <div id="tab-panel-galeria" class="tab-panel">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Galería de Trabajos Realizados</h2>
-              <p class="panel-desc">Añade fotografías de instalaciones reales para mostrar la calidad de los acabados</p>
+              <h2 class="panel-title">Publicaciones y Galería de Obras</h2>
+              <p class="panel-desc">Sube fotos reales de tus instalaciones, oculta las que desees o edita sus detalles</p>
             </div>
           </div>
 
           <!-- Add Work Card -->
-          <div class="admin-card">
-            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1.2rem;">
-              Subir Nueva Fotografía de Instalación
+          <div class="admin-card" id="card-add-gallery">
+            <h3 class="card-section-title" style="margin-bottom: 1rem;">
+              📸 Subir Nueva Fotografía de Instalación
             </h3>
 
             <form id="form-add-gallery" enctype="multipart/form-data">
-              <div class="file-upload-box" onclick="document.getElementById('gallery-file-input').click()">
-                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📸</div>
-                <strong>Haz clic aquí para seleccionar una imagen</strong>
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.35rem;">Formatos aceptados: JPG, PNG, WEBP (Máximo 10 MB)</p>
-                <input type="file" id="gallery-file-input" name="image" accept="image/jpeg,image/png,image/webp" style="display: none;" required>
-                <img id="gallery-preview-thumb" class="preview-thumbnail" alt="Vista previa">
-              </div>
+              <!-- Drag and Drop File Upload Area -->
+              <label for="gallery-file-input" class="file-upload-box" id="gallery-dropzone">
+                <div class="upload-icon-graphic">📷</div>
+                <strong class="upload-instruction-title">Haz clic aquí o arrastra tu imagen para seleccionarla</strong>
+                <p class="upload-instruction-sub">Formatos permitidos: JPG, PNG, WEBP, GIF (Hasta 15 MB)</p>
+                <input type="file" id="gallery-file-input" name="image" accept="image/jpeg,image/png,image/webp,image/gif" style="position: absolute; opacity: 0; width: 1px; height: 1px;">
+                <div id="gallery-file-chosen-info" class="file-chosen-info" style="display: none;">
+                  <span id="chosen-filename" style="font-weight: 600;">archivo.jpg</span>
+                  <span id="chosen-filesize" style="color: #64748b; font-size: 0.85rem;">(1.2 MB)</span>
+                </div>
+                <img id="gallery-preview-thumb" class="preview-thumbnail" alt="Vista previa de imagen">
+              </label>
 
-              <div class="settings-grid-2col">
+              <div class="settings-grid-2col" style="margin-top: 1rem;">
                 <div class="form-group">
-                  <label class="form-label" for="gallery-title">Título del Trabajo *</label>
-                  <input type="text" id="gallery-title" name="title" class="form-input" placeholder="Ej. Instalación de cuadro general en vivienda" required>
+                  <label class="form-label" for="gallery-title">Título del Trabajo / Instalación *</label>
+                  <input type="text" id="gallery-title" name="title" class="form-input" placeholder="Ej. Cuadro Eléctrico General en Vivienda" required>
                 </div>
 
                 <div class="form-group">
@@ -232,253 +373,394 @@
                     <option value="electricidad">⚡ Electricidad</option>
                     <option value="fontaneria">💧 Fontanería</option>
                     <option value="suelo_radiante">♨️ Suelo Radiante</option>
-                    <option value="otro">Otras Instalaciones</option>
+                    <option value="climatizacion">❄️ Climatización</option>
+                    <option value="reformas">🏠 Reformas</option>
+                    <option value="otro">🔧 Otras Instalaciones</option>
                   </select>
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="gallery-desc">Descripción técnica (opcional)</label>
-                <textarea id="gallery-desc" name="description" class="form-textarea" style="min-height: 70px;" placeholder="Detalles de la instalación, materiales utilizados o ubicación..."></textarea>
+                <label class="form-label" for="gallery-desc">Descripción Técnica (opcional)</label>
+                <textarea id="gallery-desc" name="description" class="form-textarea" style="min-height: 65px;" placeholder="Detalles de los materiales, protecciones, marcas o características de la obra..."></textarea>
               </div>
 
-              <div class="form-group" style="max-width: 200px;">
-                <label class="form-label" for="gallery-order">Orden de aparición</label>
-                <input type="number" id="gallery-order" name="display_order" class="form-input" value="0">
-              </div>
+              <div class="settings-grid-3col">
+                <div class="form-group">
+                  <label class="form-label" for="gallery-order">Orden de aparición</label>
+                  <input type="number" id="gallery-order" name="display_order" class="form-input" value="0">
+                </div>
 
-              <button type="submit" id="btn-submit-gallery" class="btn btn-primary">
-                Publicar en la Galería
-              </button>
+                <div class="form-group">
+                  <label class="form-label" for="gallery-status">Estado inicial de la publicación</label>
+                  <select id="gallery-status" name="status" class="form-select">
+                    <option value="approved" selected>🟢 Visible y Aprobada en Web</option>
+                    <option value="hidden">🟡 Oculta (Borrador temporal)</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: flex-end;">
+                  <button type="submit" id="btn-submit-gallery" class="btn btn-primary" style="width: 100%;">
+                    Publicar Fotografía
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
 
           <!-- Existing Works Table -->
-          <div class="admin-card" style="padding: 1rem; overflow-x: auto;">
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1rem;">
-              Fotografías Actuales en Galería
-            </h3>
+          <div class="admin-card table-responsive-card">
+            <div class="card-header-flex" style="margin-bottom: 1rem;">
+              <h3 class="card-section-title">
+                🖼️ Listado de Publicaciones en Galería
+              </h3>
+              <div class="gallery-filters" style="margin-bottom: 0;">
+                <button class="filter-btn filter-gallery-btn active" onclick="filterAdminGallery('', this)">Todas</button>
+                <button class="filter-btn filter-gallery-btn" onclick="filterAdminGallery('approved', this)">Visibles</button>
+                <button class="filter-btn filter-gallery-btn" onclick="filterAdminGallery('hidden', this)">Ocultas</button>
+              </div>
+            </div>
+
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Imagen</th>
-                  <th>Título</th>
+                  <th style="width: 80px;">Foto</th>
+                  <th>Título de la Obra</th>
                   <th>Categoría</th>
                   <th>Descripción</th>
                   <th>Orden</th>
-                  <th>Acción</th>
+                  <th>Estado</th>
+                  <th style="min-width: 200px;">Acciones</th>
                 </tr>
               </thead>
               <tbody id="admin-gallery-tbody">
-                <!-- Loaded via JS -->
+                <tr><td colspan="7" style="text-align: center; padding: 2rem;">Cargando galería...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- ==========================================
-             Tab 4: Servicios
-             ========================================== -->
+        <!-- ==================================================================
+             TAB 4: SERVICIOS Y ESPECIALIDADES (GUARDADO PERMANENTE Y EDICIÓN)
+             ================================================================== -->
         <div id="tab-panel-servicios" class="tab-panel">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Gestión de Servicios</h2>
-              <p class="panel-desc">Administra las especialidades visibles en la web pública</p>
+              <h2 class="panel-title">Gestión de Servicios y Especialidades</h2>
+              <p class="panel-desc">Añade, edita, oculta o elimina servicios. Quedan guardados permanentemente en la base de datos hasta que decidas cambiarlos.</p>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-sm" onclick="openAddServiceModal()">
+                + Añadir Nuevo Servicio
+              </button>
             </div>
           </div>
 
+          <!-- Add Service Card -->
           <div class="admin-card">
-            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1.2rem;">
-              Añadir Nueva Especialidad
+            <h3 class="card-section-title" style="margin-bottom: 1rem;">
+              ➕ Registrar Nueva Especialidad Profesional
             </h3>
 
             <form id="form-add-service">
               <div class="settings-grid-2col">
                 <div class="form-group">
-                  <label class="form-label">Título del Servicio *</label>
-                  <input type="text" name="title" class="form-input" placeholder="Ej. Boletines Eléctricos" required>
+                  <label class="form-label" for="srv-title">Título del Servicio *</label>
+                  <input type="text" id="srv-title" name="title" class="form-input" placeholder="Ej. Boletines Eléctricos y Certificados" required>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Categoría *</label>
-                  <select name="category" class="form-select">
-                    <option value="electricidad">Electricidad</option>
-                    <option value="fontaneria">Fontanería</option>
-                    <option value="suelo_radiante">Suelo Radiante</option>
-                    <option value="otro">Otro</option>
+                  <label class="form-label" for="srv-category">Categoría *</label>
+                  <select id="srv-category" name="category" class="form-select">
+                    <option value="electricidad">⚡ Electricidad</option>
+                    <option value="fontaneria">💧 Fontanería</option>
+                    <option value="suelo_radiante">♨️ Suelo Radiante</option>
+                    <option value="climatizacion">❄️ Climatización</option>
+                    <option value="reformas">🏠 Reformas</option>
+                    <option value="otro">🔧 Otro Servicio</option>
                   </select>
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label">Descripción del Servicio *</label>
-                <textarea name="description" class="form-textarea" placeholder="Explica detalladamente qué incluye este trabajo..." required></textarea>
+                <label class="form-label" for="srv-description">Descripción Detallada *</label>
+                <textarea id="srv-description" name="description" class="form-textarea" placeholder="Explica detalladamente qué incluye este trabajo, normativa y materiales..." required></textarea>
               </div>
 
-              <div class="settings-grid-2col">
+              <div class="settings-grid-3col">
                 <div class="form-group">
-                  <label class="form-label">Icono</label>
-                  <select name="icon" class="form-select">
-                    <option value="zap">Rayo ⚡ (Electricidad)</option>
-                    <option value="droplet">Gota 💧 (Fontanería)</option>
-                    <option value="flame">Fuego ♨️ (Suelo Radiante)</option>
-                    <option value="wrench">Herramienta 🔧 (General)</option>
+                  <label class="form-label" for="srv-icon">Icono Distintivo</label>
+                  <select id="srv-icon" name="icon" class="form-select">
+                    <option value="zap">⚡ Rayo (Electricidad)</option>
+                    <option value="droplet">💧 Gota (Fontanería)</option>
+                    <option value="flame">♨️ Fuego / Calor (Suelo Radiante)</option>
+                    <option value="wrench">🔧 Herramienta (Mantenimiento)</option>
+                    <option value="shield">🛡️ Escudo (Seguridad / Certificados)</option>
+                    <option value="home">🏠 Casa (Reformas e Instalación)</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Orden</label>
-                  <input type="number" name="display_order" class="form-input" value="10">
+                  <label class="form-label" for="srv-order">Orden de Visualización</label>
+                  <input type="number" id="srv-order" name="display_order" class="form-input" value="10">
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: flex-end;">
+                  <button type="submit" id="btn-submit-service" class="btn btn-primary" style="width: 100%;">
+                    💾 Guardar Servicio
+                  </button>
                 </div>
               </div>
-
-              <button type="submit" class="btn btn-primary">
-                Añadir Servicio
-              </button>
             </form>
           </div>
 
-          <div class="admin-card" style="padding: 1rem; overflow-x: auto;">
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1rem;">
-              Servicios Configurados
+          <!-- Existing Services Table -->
+          <div class="admin-card table-responsive-card">
+            <h3 class="card-section-title" style="margin-bottom: 1rem;">
+              ⚡ Especialidades Configuradas Actualmente
             </h3>
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Título</th>
+                  <th>Icono</th>
+                  <th>Título del Servicio</th>
                   <th>Categoría</th>
                   <th>Descripción</th>
                   <th>Orden</th>
                   <th>Estado</th>
-                  <th>Acciones</th>
+                  <th style="min-width: 180px;">Acciones</th>
                 </tr>
               </thead>
               <tbody id="admin-services-tbody">
-                <!-- Loaded via JS -->
+                <tr><td colspan="7" style="text-align: center; padding: 2rem;">Cargando servicios...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- ==========================================
-             Tab 5: Datos y Contenido
-             ========================================== -->
-        <div id="tab-panel-contacto" class="tab-panel">
+        <!-- ==================================================================
+             TAB 5: PERSONALIZACIÓN COMPLETA DE LA WEB
+             ================================================================== -->
+        <div id="tab-panel-personalizacion" class="tab-panel">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Datos Comerciales y Contenido</h2>
-              <p class="panel-desc">Modifica los datos de contacto, textos y enlaces de la empresa</p>
+              <h2 class="panel-title">Personalización Completa del Sitio Web</h2>
+              <p class="panel-desc">Modifica textos, teléfonos, horarios, ubicación del mapa y apariencia corporativa</p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('form-settings').requestSubmit()">
+                💾 Guardar Todos los Cambios
+              </button>
             </div>
           </div>
 
           <form id="form-settings">
+            <!-- 1. Identidad y Textos de Portada -->
             <div class="admin-card">
-              <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1.2rem;">
-                Canales de Contacto Directo
+              <h3 class="card-section-title" style="margin-bottom: 1rem;">
+                📝 Textos Principales de Portada (Hero y Presentación)
               </h3>
 
               <div class="settings-grid-2col">
                 <div class="form-group">
-                  <label class="form-label">Teléfono Visible</label>
-                  <input type="text" name="phone" class="form-input" value="671 72 80 43" required>
+                  <label class="form-label">Nombre Comercial de la Empresa</label>
+                  <input type="text" name="company_name" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Teléfono Marcación Directa (sin espacios)</label>
-                  <input type="text" name="phone_raw" class="form-input" value="671728043" required>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">WhatsApp (con prefijo 34)</label>
-                  <input type="text" name="whatsapp" class="form-input" value="34671728043" required>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Correo Electrónico Oficial (opcional)</label>
-                  <input type="email" name="email" class="form-input" value="pedroliebana35@gmail.com" placeholder="ejemplo@saniinstalaciones.es">
-                  <small style="color: #64748b; font-size: 0.8rem;">Dirección de correo utilizada para contacto.</small>
+                  <label class="form-label">Etiqueta Superior Destacada (Hero Badge)</label>
+                  <input type="text" name="hero_badge" class="form-input" placeholder="Instalador Homologado en Jamilena (Jaén)">
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label">Dirección / Ubicación</label>
-                <input type="text" name="address" class="form-input" value="Jamilena, Jaén (España)">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Aviso de Horario y Atención Técnica (visible en la web)</label>
-                <input type="text" name="schedule_notice" class="form-input" placeholder="Lunes a Viernes de 8:00 a 19:30 h | Urgencias 24h">
-              </div>
-            </div>
-
-            <div class="admin-card">
-              <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1.2rem;">
-                Textos Principales de la Portada
-              </h3>
-
-              <div class="form-group">
-                <label class="form-label">Título Principal (Hero)</label>
+                <label class="form-label">Título Principal (Hero H1)</label>
                 <input type="text" name="hero_title" class="form-input" required>
               </div>
 
               <div class="form-group">
-                <label class="form-label">Subtítulo (Hero)</label>
-                <textarea name="hero_subtitle" class="form-textarea" style="min-height: 80px;" required></textarea>
+                <label class="form-label">Subtítulo Explicativo (Hero)</label>
+                <textarea name="hero_subtitle" class="form-textarea" style="min-height: 75px;" required></textarea>
               </div>
 
               <div class="form-group">
-                <label class="form-label">Presentación de la Empresa (Texto principal)</label>
+                <label class="form-label">Texto Introductorio "Sobre Nosotros"</label>
+                <textarea name="about_intro" class="form-textarea" style="min-height: 75px;"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Cuerpo de Texto "Sobre Nosotros" (Garantías y Calidad)</label>
                 <textarea name="about_text" class="form-textarea" style="min-height: 100px;" required></textarea>
               </div>
             </div>
 
+            <!-- 2. Canales de Contacto Directo -->
             <div class="admin-card">
-              <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-brand-blue); margin-bottom: 1.2rem;">
-                Redes Sociales Oficiales
+              <h3 class="card-section-title" style="margin-bottom: 1rem;">
+                📞 Canales de Contacto Directo
+              </h3>
+
+              <div class="settings-grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Teléfono Visible en Web</label>
+                  <input type="text" name="phone" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Teléfono Directo de Llamada (solo dígitos)</label>
+                  <input type="text" name="phone_raw" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">WhatsApp (con código de país 34)</label>
+                  <input type="text" name="whatsapp" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Correo Electrónico Oficial</label>
+                  <input type="email" name="email" class="form-input" placeholder="correo@saniinstalaciones.es">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Horario de Atención y Asistencia</label>
+                <input type="text" name="schedule_notice" class="form-input" placeholder="Lunes a Viernes de 8:00 a 19:30 h | Urgencias 24h">
+              </div>
+            </div>
+
+            <!-- 3. Ubicación y Mapa -->
+            <div class="admin-card">
+              <h3 class="card-section-title" style="margin-bottom: 1rem;">
+                📍 Ubicación y Configuración del Mapa
+              </h3>
+
+              <div class="settings-grid-3col">
+                <div class="form-group">
+                  <label class="form-label">Dirección / Sede Visible</label>
+                  <input type="text" name="address" class="form-input" value="Recinto Ferial, Jamilena, Jaén (España)" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Municipio</label>
+                  <input type="text" name="city" class="form-input" value="Jamilena" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Provincia</label>
+                  <input type="text" name="province" class="form-input" value="Jaén" required>
+                </div>
+              </div>
+
+              <div class="settings-grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Latitud GPS del Mapa (Recinto Ferial)</label>
+                  <input type="text" name="map_lat" class="form-input" value="37.74603" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Longitud GPS del Mapa (Recinto Ferial)</label>
+                  <input type="text" name="map_lng" class="form-input" value="-3.91060" required>
+                </div>
+              </div>
+              <small style="color: #64748b; font-size: 0.85rem;">
+                El mapa se ajusta automáticamente con zoom cercano centrado en el Recinto Ferial de Jamilena.
+              </small>
+            </div>
+
+            <!-- 4. Banner de Urgencias y Avisos -->
+            <div class="admin-card">
+              <h3 class="card-section-title" style="margin-bottom: 1rem;">
+                🔔 Banner Superior de Avisos en la Web
+              </h3>
+
+              <div class="form-group">
+                <label class="switch-toggle-label">
+                  <input type="checkbox" name="banner_active">
+                  <span class="switch-toggle-text"><strong>Mostrar Banner de Aviso en la parte superior de la página web</strong></span>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Mensaje del Banner</label>
+                <input type="text" name="banner_text" class="form-input" placeholder="Servicio de averías urgentes disponible. Llámanos al 671 72 80 43">
+              </div>
+            </div>
+
+            <!-- 5. Redes Sociales y Reseñas Externas -->
+            <div class="admin-card">
+              <h3 class="card-section-title" style="margin-bottom: 1rem;">
+                🌐 Redes Sociales y Enlaces Externos
               </h3>
 
               <div class="settings-grid-2col">
                 <div>
                   <div class="form-group">
-                    <label class="form-label">URL Facebook Oficial</label>
+                    <label class="form-label">Página de Facebook Oficial</label>
                     <input type="url" name="social_facebook" class="form-input" placeholder="https://facebook.com/...">
                   </div>
-                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
-                    <input type="checkbox" name="social_facebook_active"> Mostrar enlace a Facebook en la web
+                  <label class="checkbox-simple-label">
+                    <input type="checkbox" name="social_facebook_active"> Mostrar botón de Facebook en la web
                   </label>
                 </div>
 
                 <div>
                   <div class="form-group">
-                    <label class="form-label">URL Instagram Oficial</label>
+                    <label class="form-label">Perfil de Instagram Oficial</label>
                     <input type="url" name="social_instagram" class="form-input" placeholder="https://instagram.com/...">
                   </div>
-                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
-                    <input type="checkbox" name="social_instagram_active"> Mostrar enlace a Instagram en la web
+                  <label class="checkbox-simple-label">
+                    <input type="checkbox" name="social_instagram_active"> Mostrar botón de Instagram en la web
                   </label>
                 </div>
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg">
-              Guardar Cambios de Configuración
-            </button>
+            <!-- 6. Colores de Marca -->
+            <div class="admin-card">
+              <h3 class="card-section-title" style="margin-bottom: 1rem;">
+                🎨 Apariencia y Colores Corporativos
+              </h3>
+
+              <div class="settings-grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Color Azul Principal</label>
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" name="primary_color" class="color-picker-input" value="#004b93">
+                    <span style="font-size: 0.9rem; color: #64748b;">(Predeterminado: #004b93)</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Color Acento Amarillo / Dorado</label>
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" name="accent_color" class="color-picker-input" value="#eab308">
+                    <span style="font-size: 0.9rem; color: #64748b;">(Predeterminado: #eab308)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+              <button type="submit" class="btn btn-primary btn-lg">
+                💾 Guardar Todos los Cambios de Personalización
+              </button>
+            </div>
           </form>
         </div>
 
-        <!-- ==========================================
-             Tab 6: Seguridad / Contraseña
-             ========================================== -->
+        <!-- ==================================================================
+             TAB 6: SEGURIDAD Y ACCESO
+             ================================================================== -->
         <div id="tab-panel-seguridad" class="tab-panel">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Seguridad y Acceso</h2>
-              <p class="panel-desc">Actualiza la contraseña del administrador del panel</p>
+              <h2 class="panel-title">Seguridad y Credenciales de Administrador</h2>
+              <p class="panel-desc">Actualiza la contraseña del panel de administración</p>
             </div>
           </div>
 
-          <div class="admin-card" style="max-width: 500px;">
-            <div id="security-alert" class="alert"></div>
+          <div class="admin-card" style="max-width: 520px;">
+            <div id="security-alert" class="alert" style="display: none;"></div>
 
             <form id="form-security">
               <div class="form-group">
@@ -497,7 +779,7 @@
               </div>
 
               <button type="submit" class="btn btn-primary" style="width: 100%;">
-                Actualizar Contraseña
+                Actualizar Contraseña de Administrador
               </button>
             </form>
           </div>
@@ -507,6 +789,198 @@
     </div>
   </div>
 
+  <!-- ==========================================================================
+       MODAL: EDITAR PUBLICACIÓN / FOTO DE GALERÍA
+       ========================================================================== -->
+  <div id="modal-edit-gallery" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Publicación de Galería</h3>
+        <button class="modal-close-btn" onclick="closeEditGalleryModal()">✕</button>
+      </div>
+
+      <form id="form-edit-gallery" enctype="multipart/form-data">
+        <input type="hidden" id="edit-gallery-id" name="id">
+
+        <div class="form-group">
+          <label class="form-label">Título del Trabajo *</label>
+          <input type="text" id="edit-gallery-title" name="title" class="form-input" required>
+        </div>
+
+        <div class="settings-grid-2col">
+          <div class="form-group">
+            <label class="form-label">Especialidad / Categoría</label>
+            <select id="edit-gallery-category" name="category" class="form-select">
+              <option value="electricidad">⚡ Electricidad</option>
+              <option value="fontaneria">💧 Fontanería</option>
+              <option value="suelo_radiante">♨️ Suelo Radiante</option>
+              <option value="climatizacion">❄️ Climatización</option>
+              <option value="reformas">🏠 Reformas</option>
+              <option value="otro">🔧 Otra Instalación</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Estado de la Publicación</label>
+            <select id="edit-gallery-status" name="status" class="form-select">
+              <option value="approved">🟢 Visible y Aprobada en Web</option>
+              <option value="hidden">🟡 Oculta (No visible)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descripción Técnica</label>
+          <textarea id="edit-gallery-desc" name="description" class="form-textarea" style="min-height: 70px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Orden de Visualización</label>
+          <input type="number" id="edit-gallery-order" name="display_order" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Reemplazar Fotografía (opcional)</label>
+          <input type="file" id="edit-gallery-file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" class="form-input">
+          <div style="margin-top: 0.5rem;">
+            <span style="font-size: 0.85rem; color: #64748b;">Imagen actual:</span>
+            <img id="edit-gallery-current-img" src="" alt="Actual" style="height: 60px; border-radius: 4px; display: block; margin-top: 4px; object-fit: cover;">
+          </div>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline-dark" onclick="closeEditGalleryModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: EDITAR SERVICIO
+       ========================================================================== -->
+  <div id="modal-edit-service" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Servicio o Especialidad</h3>
+        <button class="modal-close-btn" onclick="closeEditServiceModal()">✕</button>
+      </div>
+
+      <form id="form-edit-service">
+        <input type="hidden" id="edit-service-id" name="id">
+
+        <div class="settings-grid-2col">
+          <div class="form-group">
+            <label class="form-label">Título del Servicio *</label>
+            <input type="text" id="edit-service-title" name="title" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoría *</label>
+            <select id="edit-service-category" name="category" class="form-select">
+              <option value="electricidad">⚡ Electricidad</option>
+              <option value="fontaneria">💧 Fontanería</option>
+              <option value="suelo_radiante">♨️ Suelo Radiante</option>
+              <option value="climatizacion">❄️ Climatización</option>
+              <option value="reformas">🏠 Reformas</option>
+              <option value="otro">🔧 Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descripción del Servicio *</label>
+          <textarea id="edit-service-description" name="description" class="form-textarea" style="min-height: 80px;" required></textarea>
+        </div>
+
+        <div class="settings-grid-3col">
+          <div class="form-group">
+            <label class="form-label">Icono</label>
+            <select id="edit-service-icon" name="icon" class="form-select">
+              <option value="zap">⚡ Rayo</option>
+              <option value="droplet">💧 Gota</option>
+              <option value="flame">♨️ Fuego</option>
+              <option value="wrench">🔧 Herramienta</option>
+              <option value="shield">🛡️ Escudo</option>
+              <option value="home">🏠 Casa</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Orden</label>
+            <input type="number" id="edit-service-order" name="display_order" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Estado</label>
+            <select id="edit-service-active" name="is_active" class="form-select">
+              <option value="1">🟢 Activo en Web</option>
+              <option value="0">🟡 Desactivado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline-dark" onclick="closeEditServiceModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Servicio</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: AÑADIR OPINIÓN MANUALMENTE
+       ========================================================================== -->
+  <div id="modal-add-review" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar Opinión de Cliente Manualmente</h3>
+        <button class="modal-close-btn" onclick="closeAddReviewModal()">✕</button>
+      </div>
+
+      <form id="form-manual-review">
+        <div class="settings-grid-2col">
+          <div class="form-group">
+            <label class="form-label">Nombre del Cliente *</label>
+            <input type="text" name="author_name" class="form-input" placeholder="Ej. Juan Gómez" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Valoración en Estrellas *</label>
+            <select name="rating" class="form-select">
+              <option value="5" selected>★★★★★ (5 Estrellas - Excelente)</option>
+              <option value="4">★★★★☆ (4 Estrellas - Muy Bueno)</option>
+              <option value="3">★★★☆☆ (3 Estrellas - Bueno)</option>
+              <option value="2">★★☆☆☆ (2 Estrellas)</option>
+              <option value="1">★☆☆☆☆ (1 Estrella)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Comentario u Opinión *</label>
+          <textarea name="comment" class="form-textarea" style="min-height: 80px;" placeholder="Opinión del cliente sobre la instalación realizada..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Estado de la Opinión</label>
+          <select name="status" class="form-select">
+            <option value="approved" selected>🟢 Aprobada y Publicada Inmediatamente</option>
+            <option value="pending">⏳ Pendiente de Revisión</option>
+            <option value="hidden">🟡 Oculta</option>
+          </select>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline-dark" onclick="closeAddReviewModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Opinión</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="/js/admin.js"></script>
 </body>
 </html>

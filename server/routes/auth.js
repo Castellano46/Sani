@@ -47,13 +47,14 @@ router.post('/login', (req, res) => {
   return res.json({
     success: true,
     message: 'Sesión iniciada correctamente',
-    username: admin.username
+    username: admin.username,
+    token: token
   });
 });
 
 // POST /api/auth/logout
 router.post('/logout', (req, res) => {
-  const token = req.cookies?.[COOKIE_NAME];
+  const token = req.cookies?.[COOKIE_NAME] || req.headers['authorization']?.replace('Bearer ', '');
   if (token) {
     db.prepare('DELETE FROM sessions WHERE id = ?').run(token);
   }
@@ -70,7 +71,7 @@ router.get('/me', (req, res) => {
 
   const now = Math.floor(Date.now() / 1000);
   const session = db.prepare(`
-    SELECT a.username
+    SELECT a.username, s.id as token
     FROM sessions s
     JOIN admins a ON s.admin_id = a.id
     WHERE s.id = ? AND s.expires_at > ?
@@ -83,7 +84,8 @@ router.get('/me', (req, res) => {
 
   return res.json({
     authenticated: true,
-    username: session.username
+    username: session.username,
+    token: session.token
   });
 });
 

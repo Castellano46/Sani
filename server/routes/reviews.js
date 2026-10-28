@@ -180,6 +180,45 @@ router.get('/all', requireAuth, (req, res) => {
   }
 });
 
+// POST /api/reviews/admin (Admin only: manually add verified client review)
+router.post('/admin', requireAuth, (req, res) => {
+  const { author_name, rating, comment, status } = req.body;
+
+  if (!author_name || !author_name.trim()) {
+    return res.status(400).json({ error: 'El nombre o cliente es obligatorio.' });
+  }
+  const cleanName = escapeHtml(author_name.trim());
+
+  const numRating = parseInt(rating, 10);
+  if (isNaN(numRating) || numRating < 1 || numRating > 5) {
+    return res.status(400).json({ error: 'La valoración debe ser de 1 a 5 estrellas.' });
+  }
+
+  if (!comment || !comment.trim()) {
+    return res.status(400).json({ error: 'El comentario u opinión es obligatorio.' });
+  }
+  const cleanComment = escapeHtml(comment.trim());
+  const statusVal = ['approved', 'pending', 'hidden'].includes(status) ? status : 'approved';
+
+  try {
+    const result = db.prepare(`
+      INSERT INTO reviews (author_name, rating, comment, status, ip_hash)
+      VALUES (?, ?, ?, ?, 'admin_entry')
+    `).run(cleanName, numRating, cleanComment, statusVal);
+
+    db.pragma('wal_checkpoint(PASSIVE)');
+
+    res.status(201).json({
+      success: true,
+      message: 'Opinión registrada y guardada con éxito.',
+      id: result.lastInsertRowid
+    });
+  } catch (err) {
+    console.error('Error inserting admin review:', err);
+    res.status(500).json({ error: 'No se pudo guardar la opinión.' });
+  }
+});
+
 // PUT /api/reviews/:id/status (Admin only: approve, hide, reset)
 router.put('/:id/status', requireAuth, (req, res) => {
   const { id } = req.params;
@@ -194,6 +233,8 @@ router.put('/:id/status', requireAuth, (req, res) => {
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Opinión no encontrada.' });
     }
+
+    db.pragma('wal_checkpoint(PASSIVE)');
 
     res.json({ success: true, message: `Opinión marcada como ${status}.` });
   } catch (err) {
@@ -210,6 +251,9 @@ router.delete('/:id', requireAuth, (req, res) => {
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Opinión no encontrada.' });
     }
+
+    db.pragma('wal_checkpoint(PASSIVE)');
+
     res.json({ success: true, message: 'Opinión eliminada permanentemente.' });
   } catch (err) {
     console.error('Error deleting review:', err);
