@@ -1,0 +1,32 @@
+{
+  "name": "sani-instalaciones",
+  "version": "1.0.0",
+  "description": "Sitio web corporativo y panel de administración para Sani Instalaciones (Jamilena, Jaén)",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node -e \"console.log('Validating server setup...'); require('./server/db'); console.log('OK');\""
+  },
+  "keywords": [
+    "instalaciones",
+    "electricidad",
+    "fontaneria",
+    "suelo-radiante",
+    "jamilena",
+    "jaen"
+  ],
+  "author": "Sani Instalaciones",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.6.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
+    "helmet": "^8.1.0",
+    "multer": "^2.1.1"
+  }
+}

@@ -1,0 +1,266 @@
+const Database = require('better-sqlite3');
+const path = require('path');
+const fs = require('fs');
+const bcrypt = require('bcryptjs');
+
+const dbDir = path.join(__dirname, '..', 'data');
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const dbPath = path.join(dbDir, 'sani.db');
+const db = new Database(dbPath);
+
+// Optimize SQLite for concurrent reads and writes
+db.pragma('journal_mode = WAL');
+db.pragma('synchronous = NORMAL');
+db.pragma('foreign_keys = ON');
+
+function initDatabase() {
+  // 1. Admins table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS admins (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // 2. Services table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL,
+      description TEXT NOT NULL,
+      icon TEXT DEFAULT 'wrench',
+      is_active INTEGER DEFAULT 1,
+      display_order INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // 3. Gallery table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS gallery (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL,
+      description TEXT,
+      image_url TEXT NOT NULL,
+      display_order INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // 4. Reviews table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      author_name TEXT NOT NULL,
+      rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+      comment TEXT NOT NULL,
+      status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'hidden'
+      ip_hash TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // 5. Settings table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+  `);
+
+  // 6. Admin sessions / tokens or security table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      id TEXT PRIMARY KEY,
+      admin_id INTEGER NOT NULL,
+      expires_at INTEGER NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE CASCADE
+    );
+  `);
+
+  // Seed default admin if none exists
+  const adminCount = db.prepare('SELECT COUNT(*) as count FROM admins').get().count;
+  if (adminCount === 0) {
+    const defaultUser = process.env.ADMIN_USER || 'admin';
+    const defaultPass = process.env.ADMIN_PASSWORD || 'Sani2026!Admin';
+    const salt = bcrypt.genSaltSync(12);
+    const hash = bcrypt.hashSync(defaultPass, salt);
+
+    db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run(defaultUser, hash);
+    console.log(`[DB] Default admin user '${defaultUser}' created.`);
+  }
+
+  // Seed default settings if empty
+  const defaultSettings = {
+    company_name: 'Sani Instalaciones',
+    phone: '671 72 80 43',
+    phone_raw: '671728043',
+    whatsapp: '34671728043',
+    email: 'pedroliebana35@gmail.com',
+    city: 'Jamilena',
+    province: 'Jaén',
+    country: 'España',
+    address: 'Jamilena, Jaén (España)',
+    map_lat: '37.7475',
+    map_lng: '-3.9125',
+    hero_title: 'Instalaciones Profesionales de Confianza',
+    hero_subtitle: 'Especialistas en electricidad, fontanería y suelo radiante en Jamilena y toda la provincia de Jaén. Compromiso, calidad y cercanía.',
+    about_intro: 'En Sani Instalaciones ofrecemos servicios integrales de máxima calidad técnica para viviendas, comercios y reformas en Jamilena y comarca.',
+    about_text: 'Nos caracterizamos por la seriedad, la limpieza en la ejecución y un trato directo y transparente. Cada instalación se realiza con materiales homologados y cumpliendo rigurosamente la normativa vigente para garantizar seguridad, durabilidad y eficiencia.',
+    social_facebook: '',
+    social_instagram: '',
+    social_facebook_active: '0',
+    social_instagram_active: '0',
+    schedule_notice: 'Atención telefónica y urgencias de lunes a viernes'
+  };
+
+  const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
+  const setMany = db.transaction((settingsObj) => {
+    for (const [key, val] of Object.entries(settingsObj)) {
+      insertSetting.run(key, val);
+    }
+  });
+  setMany(defaultSettings);
+
+  // Seed verified services if table empty
+  const servicesCount = db.prepare('SELECT COUNT(*) as count FROM services').get().count;
+  if (servicesCount === 0) {
+    const initialServices = [
+      {
+        title: 'Instalaciones Eléctricas',
+        category: 'electricidad',
+        description: 'Instalaciones eléctricas completas en obra nueva y reformas, cuadros de distribución, renovación de cableado, iluminación eficiente y mantenimiento preventivo y correctivo.',
+        icon: 'zap',
+        is_active: 1,
+        display_order: 1
+      },
+      {
+        title: 'Fontanería General',
+        category: 'fontaneria',
+        description: 'Redes de fontanería, distribución de agua fría y caliente, renovación de tuberías, colectores multicapa, sanitarios, grifería y resolución de averías.',
+        icon: 'droplet',
+        is_active: 1,
+        display_order: 2
+      },
+      {
+        title: 'Suelo Radiante',
+        category: 'suelo_radiante',
+        description: 'Instalación de sistemas avanzados de calefacción y climatización por suelo radiante. Máximo confort térmico, distribución homogénea del calor y notable ahorro energético.',
+        icon: 'flame',
+        is_active: 1,
+        display_order: 3
+      }
+    ];
+
+    const insertService = db.prepare(`
+      INSERT INTO services (title, category, description, icon, is_active, display_order)
+      VALUES (@title, @category, @description, @icon, @is_active, @display_order)
+    `);
+
+    const seedServices = db.transaction((list) => {
+      for (const item of list) {
+        insertService.run(item);
+      }
+    });
+    seedServices(initialServices);
+    console.log('[DB] Initial services seeded.');
+  }
+
+  // Seed sample gallery items if table empty
+  const galleryCount = db.prepare('SELECT COUNT(*) as count FROM gallery').get().count;
+  if (galleryCount === 0) {
+    const initialGallery = [
+      {
+        title: 'Cuadro Eléctrico de Distribución',
+        category: 'electricidad',
+        description: 'Instalación y etiquetado de cuadro de protección general con protecciones magnetotérmicas y diferenciales de alta sensibilidad.',
+        image_url: '/uploads/electricidad-cuadro-general.jpg',
+        display_order: 1
+      },
+      {
+        title: 'Batería de Colectores de Fontanería',
+        category: 'fontaneria',
+        description: 'Montaje de colector con regulación independiente y tubería multicapa para distribución eficiente de agua fría y caliente sanitaria.',
+        image_url: '/uploads/fontaneria-colectores-multicapa.jpg',
+        display_order: 2
+      },
+      {
+        title: 'Sistema de Calefacción por Suelo Radiante',
+        category: 'suelo_radiante',
+        description: 'Tendido de circuitos de suelo radiante con placa de aislamiento térmico de alta densidad antes de la capa de mortero.',
+        image_url: '/uploads/suelo-radiante-instalacion.jpg',
+        display_order: 3
+      }
+    ];
+
+    const insertGallery = db.prepare(`
+      INSERT INTO gallery (title, category, description, image_url, display_order)
+      VALUES (@title, @category, @description, @image_url, @display_order)
+    `);
+
+    const seedGallery = db.transaction((list) => {
+      for (const item of list) {
+        insertGallery.run(item);
+      }
+    });
+    seedGallery(initialGallery);
+    console.log('[DB] Initial gallery items seeded.');
+  }
+
+  // Seed sample approved reviews if none approved exist
+  const approvedReviewsCount = db.prepare("SELECT COUNT(*) as count FROM reviews WHERE status = 'approved'").get().count;
+  if (approvedReviewsCount < 3) {
+    const initialReviews = [
+      {
+        author_name: 'Manuel García M.',
+        rating: 5,
+        comment: 'Excelente instalación de calefacción por suelo radiante en nuestra vivienda en Jamilena. Muy limpios, puntuales y de trato directo. El confort térmico este invierno ha sido increíble.',
+        status: 'approved'
+      },
+      {
+        author_name: 'Carmen Fuentes L.',
+        rating: 5,
+        comment: 'Nos renovaron todo el cuadro eléctrico general y la iluminación LED en Jaén. Gran profesionalidad, cumplimiento de normativa y rapidez. Recomendados al 100%.',
+        status: 'approved'
+      },
+      {
+        author_name: 'Antonio Morales R.',
+        rating: 5,
+        comment: 'Tuvimos una avería urgente de fontanería y atendieron de inmediato. Reparación limpia, materiales multicapa de calidad y precio muy honesto y claro.',
+        status: 'approved'
+      },
+      {
+        author_name: 'Francisco J. Nieto',
+        rating: 5,
+        comment: 'Instalación de fontanería completa y colectores independientes en vivienda unifamiliar. Da gusto tratar con un instalador que explica todo con transparencia y cumple los plazos.',
+        status: 'approved'
+      }
+    ];
+
+    const insertReview = db.prepare(`
+      INSERT INTO reviews (author_name, rating, comment, status)
+      VALUES (@author_name, @rating, @comment, @status)
+    `);
+
+    const seedReviews = db.transaction((list) => {
+      for (const item of list) {
+        insertReview.run(item);
+      }
+    });
+    seedReviews(initialReviews);
+    console.log('[DB] Verified approved reviews seeded.');
+  }
+}
+
+initDatabase();
+
+module.exports = db;

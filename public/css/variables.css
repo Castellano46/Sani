@@ -1,0 +1,101 @@
+/* Google Fonts Import: Modern, High-End Corporate Typography */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+:root {
+  /* Brand Core Colors (Derived from Sani Instalaciones official identity) */
+  --color-brand-blue: #0b2568;
+  --color-brand-blue-deep: #051336;
+  --color-brand-blue-dark: #071a4a;
+  --color-brand-blue-light: #163da1;
+  --color-brand-blue-surface: #0f2d7a;
+  --color-brand-blue-glow: rgba(11, 37, 104, 0.35);
+
+  /* Specialty 1: Electricidad (Lightning Amber & Electric Gold) */
+  --color-electric: #f59e0b;
+  --color-electric-light: #fef08a;
+  --color-electric-dark: #b45309;
+  --color-electric-bg: rgba(245, 158, 11, 0.12);
+  --color-electric-border: rgba(245, 158, 11, 0.32);
+  --color-electric-glow: 0 10px 30px -4px rgba(245, 158, 11, 0.4);
+  --grad-electric: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+
+  /* Specialty 2: Fontanería (Water Azure & Cyan Flow) */
+  --color-plumbing: #0284c7;
+  --color-plumbing-light: #bae6fd;
+  --color-plumbing-dark: #0369a1;
+  --color-plumbing-bg: rgba(2, 132, 199, 0.12);
+  --color-plumbing-border: rgba(2, 132, 199, 0.32);
+  --color-plumbing-glow: 0 10px 30px -4px rgba(2, 132, 199, 0.4);
+  --grad-plumbing: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+
+  /* Specialty 3: Suelo Radiante (Warm Coral & Thermal Ruby) */
+  --color-heating: #e11d48;
+  --color-heating-light: #fecdd3;
+  --color-heating-dark: #be123c;
+  --color-heating-bg: rgba(225, 29, 72, 0.12);
+  --color-heating-border: rgba(225, 29, 72, 0.32);
+  --color-heating-glow: 0 10px 30px -4px rgba(225, 29, 72, 0.4);
+  --grad-heating: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+
+  /* WhatsApp Official Brand */
+  --color-whatsapp: #10b981;
+  --color-whatsapp-hover: #059669;
+  --color-whatsapp-dark: #047857;
+  --color-whatsapp-bg: #ecfdf5;
+  --color-whatsapp-glow: 0 10px 25px -4px rgba(16, 185, 129, 0.45);
+  --grad-whatsapp: linear-gradient(135deg, #34d399 0%, #059669 100%);
+
+  /* Neutral Slate Palette */
+  --color-bg-body: #f8fafc;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-alt: #f1f5f9;
+  --color-bg-dark: #05102a;
+  --color-bg-dark-card: #09173d;
+  --color-bg-dark-card-hover: #0e2052;
+
+  --color-text-main: #0f172a;
+  --color-text-body: #334155;
+  --color-text-muted: #64748b;
+  --color-text-light: #94a3b8;
+  --color-text-white: #ffffff;
+
+  --color-border: #e2e8f0;
+  --color-border-subtle: #cbd5e1;
+  --color-border-dark: rgba(255, 255, 255, 0.12);
+  --color-border-dark-hover: rgba(255, 255, 255, 0.28);
+
+  /* Shadows & Glassmorphism */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 10px -1px rgba(0, 0, 0, 0.07), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 12px 24px -4px rgba(11, 37, 104, 0.1), 0 4px 10px -3px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 35px -5px rgba(11, 37, 104, 0.14), 0 8px 16px -6px rgba(0, 0, 0, 0.08);
+  --shadow-2xl: 0 25px 50px -12px rgba(5, 19, 54, 0.25);
+  --shadow-glow-blue: 0 10px 30px -4px rgba(11, 37, 104, 0.35);
+
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-bg-dark: rgba(9, 23, 61, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.22);
+  --glass-blur: blur(14px);
+
+  /* Typography */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: var(--font-body);
+
+  /* Border Radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Max Width */
+  --max-width: 1220px;
+}
