@@ -194,6 +194,81 @@ function initTabNavigation() {
       if (tabId) switchTab(tabId);
     });
   });
+
+  // Dedicated listener for Moderar Ahora button in dashboard
+  const btnModerate = document.getElementById('btn-dashboard-moderate');
+  if (btnModerate) {
+    btnModerate.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchTab('opiniones');
+    });
+  }
+
+  // Dedicated listeners for KPI metric cards
+  document.querySelectorAll('.metric-card[data-target-tab]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = card.dataset.targetTab;
+      if (target) switchTab(target);
+    });
+  });
+
+  // Event delegation on table action buttons for maximum resilience
+  initTableActionDelegation();
+}
+
+function initTableActionDelegation() {
+  // 1. Reviews table delegation
+  const reviewsTbody = document.getElementById('admin-reviews-tbody');
+  reviewsTbody?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-table-action');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id = btn.dataset.id;
+    if (!action || !id) return;
+    e.preventDefault();
+
+    if (action === 'approve') updateReviewStatus(id, 'approved');
+    else if (action === 'hide') updateReviewStatus(id, 'hidden');
+    else if (action === 'pending') updateReviewStatus(id, 'pending');
+    else if (action === 'delete') deleteReview(id);
+  });
+
+  // 2. Gallery table delegation
+  const galleryTbody = document.getElementById('admin-gallery-tbody');
+  galleryTbody?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-table-action');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id = btn.dataset.id;
+    if (!action || !id) return;
+    e.preventDefault();
+
+    if (action === 'approve') updateGalleryStatus(id, 'approved');
+    else if (action === 'hide') updateGalleryStatus(id, 'hidden');
+    else if (action === 'edit') openEditGalleryModal(id);
+    else if (action === 'delete') deleteGalleryItem(id);
+  });
+
+  // 3. Services table delegation
+  const servicesTbody = document.getElementById('admin-services-tbody');
+  servicesTbody?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-table-action');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id = btn.dataset.id;
+    if (!action || !id) return;
+    e.preventDefault();
+
+    if (action === 'toggle-active') {
+      const newState = Number(btn.dataset.newstate);
+      toggleServiceActive(id, newState);
+    } else if (action === 'edit') {
+      openEditServiceModal(id);
+    } else if (action === 'delete') {
+      deleteService(id);
+    }
+  });
 }
 
 window.switchTab = function(tabId) {
@@ -204,6 +279,11 @@ window.switchTab = function(tabId) {
   document.querySelectorAll('.tab-panel').forEach(p => {
     p.classList.toggle('active', p.id === `tab-panel-${tabId}`);
   });
+
+  // Smoothly scroll content area to top
+  const contentArea = document.querySelector('.admin-content-area');
+  if (contentArea) contentArea.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // Always refresh latest data when navigating to tabs
   if (tabId === 'dashboard') {
@@ -606,10 +686,10 @@ async function loadReviewsTab(statusFilter = adminState.currentReviewFilter) {
           <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
           <td>
             <div class="action-btns-group">
-              ${r.status !== 'approved' ? `<button class="btn-table-action btn-approve" onclick="updateReviewStatus(${r.id}, 'approved')" title="Aprobar para que aparezca en la web">✓ Aprobar</button>` : ''}
-              ${r.status !== 'hidden' ? `<button class="btn-table-action btn-hide" onclick="updateReviewStatus(${r.id}, 'hidden')" title="Ocultar de la web sin borrar">👁️ Ocultar</button>` : ''}
-              ${r.status !== 'pending' ? `<button class="btn-table-action btn-pending-action" onclick="updateReviewStatus(${r.id}, 'pending')" title="Mover a pendientes">⏳ Pendiente</button>` : ''}
-              <button class="btn-table-action btn-delete" onclick="deleteReview(${r.id})" title="Eliminar permanentemente">🗑️ Eliminar</button>
+              ${r.status !== 'approved' ? `<button type="button" class="btn-table-action btn-approve" data-action="approve" data-id="${r.id}" onclick="updateReviewStatus(${r.id}, 'approved')" title="Aprobar para que aparezca en la web">✓ Aprobar</button>` : ''}
+              ${r.status !== 'hidden' ? `<button type="button" class="btn-table-action btn-hide" data-action="hide" data-id="${r.id}" onclick="updateReviewStatus(${r.id}, 'hidden')" title="Ocultar de la web sin borrar">👁️ Ocultar</button>` : ''}
+              ${r.status !== 'pending' ? `<button type="button" class="btn-table-action btn-pending-action" data-action="pending" data-id="${r.id}" onclick="updateReviewStatus(${r.id}, 'pending')" title="Mover a pendientes">⏳ Pendiente</button>` : ''}
+              <button type="button" class="btn-table-action btn-delete" data-action="delete" data-id="${r.id}" onclick="deleteReview(${r.id})" title="Eliminar permanentemente">🗑️ Eliminar</button>
             </div>
           </td>
         </tr>
@@ -635,26 +715,28 @@ window.updateReviewStatus = async function(id, newStatus) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: newStatus })
     });
-    if (!res.ok) throw new Error('Error al actualizar estado');
-    const label = newStatus === 'approved' ? 'aprobada y visible' : (newStatus === 'hidden' ? 'oculta' : 'pendiente');
-    showAdminToast(`Opinión marcada como ${label}`);
-    loadReviewsTab(adminState.currentReviewFilter);
-    loadDashboardStats();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al actualizar estado');
+    const label = newStatus === 'approved' ? 'aprobada y publicada' : (newStatus === 'hidden' ? 'ocultada' : 'movida a pendientes');
+    showAdminToast(`Opinión #${id} ${label}`);
+    await loadReviewsTab(adminState.currentReviewFilter);
+    await loadDashboardStats();
   } catch (err) {
-    showAdminToast(err.message, true);
+    showAdminToast(err.message || 'Error al actualizar opinión', true);
   }
 };
 
 window.deleteReview = async function(id) {
-  if (!confirm('¿Estás seguro de que deseas eliminar permanentemente esta opinión?')) return;
+  if (!confirm(`¿Eliminar definitivamente la opinión #${id}? Esta acción no se puede deshacer.`)) return;
   try {
     const res = await authFetch(`/api/reviews/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Error al eliminar');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al eliminar');
     showAdminToast('Opinión eliminada de la base de datos');
-    loadReviewsTab(adminState.currentReviewFilter);
-    loadDashboardStats();
+    await loadReviewsTab(adminState.currentReviewFilter);
+    await loadDashboardStats();
   } catch (err) {
-    showAdminToast(err.message, true);
+    showAdminToast(err.message || 'Error al eliminar opinión', true);
   }
 };
 
@@ -759,11 +841,11 @@ async function loadGalleryTab(statusFilter = adminState.currentGalleryFilter) {
           <td>
             <div class="action-btns-group">
               ${item.status === 'hidden'
-                ? `<button class="btn-table-action btn-approve" onclick="updateGalleryStatus(${item.id}, 'approved')" title="Mostrar en la web">✓ Mostrar</button>`
-                : `<button class="btn-table-action btn-hide" onclick="updateGalleryStatus(${item.id}, 'hidden')" title="Ocultar sin borrar">👁️ Ocultar</button>`
+                ? `<button type="button" class="btn-table-action btn-approve" data-action="approve" data-id="${item.id}" onclick="updateGalleryStatus(${item.id}, 'approved')" title="Mostrar en la web">✓ Mostrar</button>`
+                : `<button type="button" class="btn-table-action btn-hide" data-action="hide" data-id="${item.id}" onclick="updateGalleryStatus(${item.id}, 'hidden')" title="Ocultar sin borrar">👁️ Ocultar</button>`
               }
-              <button class="btn-table-action btn-edit" onclick="openEditGalleryModal(${item.id})" title="Editar título, descripción u orden">✏️ Editar</button>
-              <button class="btn-table-action btn-delete" onclick="deleteGalleryItem(${item.id})" title="Eliminar definitivamente">🗑️ Eliminar</button>
+              <button type="button" class="btn-table-action btn-edit" data-action="edit" data-id="${item.id}" onclick="openEditGalleryModal(${item.id})" title="Editar título, descripción u orden">✏️ Editar</button>
+              <button type="button" class="btn-table-action btn-delete" data-action="delete" data-id="${item.id}" onclick="deleteGalleryItem(${item.id})" title="Eliminar definitivamente">🗑️ Eliminar</button>
             </div>
           </td>
         </tr>
@@ -896,13 +978,13 @@ async function loadServicesTab() {
           <td><span class="status-badge ${activeClass}">${activeLabel}</span></td>
           <td>
             <div class="action-btns-group">
-              <button class="btn-table-action ${srv.is_active ? 'btn-hide' : 'btn-approve'}" onclick="toggleServiceActive(${srv.id}, ${srv.is_active ? 0 : 1})" title="${srv.is_active ? 'Ocultar servicio' : 'Activar servicio'}">
+              <button type="button" class="btn-table-action ${srv.is_active ? 'btn-hide' : 'btn-approve'}" data-action="toggle-active" data-id="${srv.id}" data-newstate="${srv.is_active ? 0 : 1}" onclick="toggleServiceActive(${srv.id}, ${srv.is_active ? 0 : 1})" title="${srv.is_active ? 'Ocultar servicio' : 'Activar servicio'}">
                 ${srv.is_active ? 'Ocultar' : 'Activar'}
               </button>
-              <button class="btn-table-action btn-edit" onclick="openEditServiceModal(${srv.id})" title="Modificar texto o categoría">
+              <button type="button" class="btn-table-action btn-edit" data-action="edit" data-id="${srv.id}" onclick="openEditServiceModal(${srv.id})" title="Modificar texto o categoría">
                 ✏️ Editar
               </button>
-              <button class="btn-table-action btn-delete" onclick="deleteService(${srv.id})" title="Eliminar servicio">
+              <button type="button" class="btn-table-action btn-delete" data-action="delete" data-id="${srv.id}" onclick="deleteService(${srv.id})" title="Eliminar servicio">
                 🗑️ Eliminar
               </button>
             </div>

@@ -27,8 +27,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="/css/variables.css?v=20261028_3">
-  <link rel="stylesheet" href="/css/main.css?v=20261028_3">
+  <link rel="stylesheet" href="/css/variables.css?v=20261028_5">
+  <link rel="stylesheet" href="/css/main.css?v=20261028_5">
 
   <!-- Structured Data JSON-LD (Schema.org LocalBusiness) -->
   <script type="application/ld+json">
@@ -60,6 +60,14 @@
        Site Header & Sticky Navigation
        ========================================================================== -->
   <header class="site-header" id="site-header">
+    <!-- Urgent Announcement / Emergency Banner (Activated via Admin Dashboard) -->
+    <div id="site-urgent-banner" class="urgent-announcement-banner" style="display: none;">
+      <div class="container banner-inner">
+        <span class="banner-icon">🔔</span>
+        <span class="banner-text-content" id="urgent-banner-text"></span>
+      </div>
+    </div>
+
     <div class="container nav-container">
       <a href="#inicio" class="brand-link" aria-label="Sani Instalaciones - Inicio">
         <img src="/img/logo.png" alt="Logo Sani Instalaciones" class="brand-logo-img">
@@ -889,6 +897,6 @@
     </div>
   </div>
 
-  <script src="/js/main.js?v=20261028_3"></script>
+  <script src="/js/main.js?v=20261028_5"></script>
 </body>
 </html>

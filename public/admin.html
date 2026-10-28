@@ -6,9 +6,9 @@
   <title>Panel de Administración Profesional | Sani Instalaciones</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="/img/logo.png">
-  <link rel="stylesheet" href="/css/variables.css">
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/variables.css?v=20261028_5">
+  <link rel="stylesheet" href="/css/main.css?v=20261028_5">
+  <link rel="stylesheet" href="/css/admin.css?v=20261028_5">
 </head>
 <body class="admin-body">
 
@@ -141,12 +141,12 @@
                 <p style="font-size: 0.85rem; margin-top: 2px;">Debes aprobarlas u ocultarlas para que se muestren en la web pública.</p>
               </div>
             </div>
-            <button class="btn btn-sm btn-primary" onclick="switchTab('opiniones')">Moderar Ahora</button>
+            <button type="button" class="btn btn-sm btn-primary" id="btn-dashboard-moderate" onclick="switchTab('opiniones')">Moderar Ahora</button>
           </div>
 
           <!-- KPI Cards Grid -->
           <div class="metrics-grid">
-            <div class="metric-card" onclick="switchTab('opiniones')" style="cursor: pointer;" title="Haz clic para ver opiniones">
+            <div class="metric-card" data-target-tab="opiniones" onclick="switchTab('opiniones')" style="cursor: pointer;" title="Haz clic para ver opiniones">
               <div class="metric-icon-box metric-pending">⏳</div>
               <div class="metric-content">
                 <div class="metric-val" id="stat-pending-reviews">0</div>
@@ -155,7 +155,7 @@
               </div>
             </div>
 
-            <div class="metric-card" onclick="switchTab('opiniones')" style="cursor: pointer;" title="Haz clic para ver opiniones">
+            <div class="metric-card" data-target-tab="opiniones" onclick="switchTab('opiniones')" style="cursor: pointer;" title="Haz clic para ver opiniones">
               <div class="metric-icon-box metric-reviews">⭐</div>
               <div class="metric-content">
                 <div class="metric-val" id="stat-total-reviews">0</div>
@@ -164,7 +164,7 @@
               </div>
             </div>
 
-            <div class="metric-card" onclick="switchTab('galeria')" style="cursor: pointer;" title="Haz clic para gestionar galería">
+            <div class="metric-card" data-target-tab="galeria" onclick="switchTab('galeria')" style="cursor: pointer;" title="Haz clic para gestionar galería">
               <div class="metric-icon-box metric-gallery">📷</div>
               <div class="metric-content">
                 <div class="metric-val" id="stat-total-works">0</div>
@@ -173,7 +173,7 @@
               </div>
             </div>
 
-            <div class="metric-card" onclick="switchTab('servicios')" style="cursor: pointer;" title="Haz clic para gestionar servicios">
+            <div class="metric-card" data-target-tab="servicios" onclick="switchTab('servicios')" style="cursor: pointer;" title="Haz clic para gestionar servicios">
               <div class="metric-icon-box metric-services">🔧</div>
               <div class="metric-content">
                 <div class="metric-val" id="stat-active-services">0</div>
@@ -980,7 +980,7 @@
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <script src="/js/admin.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="/js/admin.js?v=20261028_5"></script>
 </body>
 </html>

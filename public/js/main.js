@@ -179,19 +179,19 @@ function applySettingsToDOM(settings) {
   }
 
   // Announcement / Emergency Banner
-  if (settings.banner_active === '1' && settings.banner_text) {
-    let banner = document.getElementById('site-urgent-banner');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'site-urgent-banner';
-      banner.className = 'urgent-announcement-banner';
-      document.body.prepend(banner);
+  const banner = document.getElementById('site-urgent-banner');
+  const bannerTextEl = document.getElementById('urgent-banner-text');
+  if (banner) {
+    if (settings.banner_active === '1' && settings.banner_text && settings.banner_text.trim()) {
+      if (bannerTextEl) {
+        bannerTextEl.textContent = settings.banner_text.trim();
+      } else {
+        banner.innerHTML = `<div class="container banner-inner"><span class="banner-icon">🔔</span><span>${settings.banner_text.trim()}</span></div>`;
+      }
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
     }
-    banner.innerHTML = `<span style="margin-right: 0.5rem;">🔔</span> ${settings.banner_text}`;
-    banner.style.display = 'block';
-  } else {
-    const banner = document.getElementById('site-urgent-banner');
-    if (banner) banner.style.display = 'none';
   }
 
   // Email contact card
@@ -907,16 +907,12 @@ async function loadReviews() {
 }
 
 function checkRecentSubmittedReview() {
+  // Purge any residual stored submission flag so notice does not persist across reloads
   try {
-    const raw = localStorage.getItem('sani_last_submitted_review');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      const noticeBanner = document.getElementById('review-pending-notice');
-      if (noticeBanner) {
-        noticeBanner.style.display = 'flex';
-      }
-    }
+    localStorage.removeItem('sani_last_submitted_review');
   } catch (e) { /* ignore */ }
+  const noticeBanner = document.getElementById('review-pending-notice');
+  if (noticeBanner) noticeBanner.style.display = 'none';
 }
 
 let selectedStarRating = 5;
@@ -1029,14 +1025,9 @@ function initReviewsSystem() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Error al enviar la valoración');
 
-      // Persist flag in localStorage so the user sees confirmation on reload
+      // Purge any residual local storage flag
       try {
-        localStorage.setItem('sani_last_submitted_review', JSON.stringify({
-          author_name,
-          rating,
-          comment,
-          date: new Date().toISOString()
-        }));
+        localStorage.removeItem('sani_last_submitted_review');
       } catch (e) { /* ignore */ }
 
       showReviewAlert(
@@ -1048,13 +1039,30 @@ function initReviewsSystem() {
       selectedStarRating = 5;
       highlightStars(5);
 
-      const noticeBanner = document.getElementById('review-pending-notice');
-      if (noticeBanner) noticeBanner.style.display = 'flex';
-
+      // Auto-close modal after brief visual confirmation and show pending banner on page for exactly 5 seconds
       setTimeout(() => {
         closeReviewModal();
-        showToast('Opinión enviada para moderación');
-      }, 2500);
+        if (alertBox) alertBox.style.display = 'none';
+
+        const noticeBanner = document.getElementById('review-pending-notice');
+        if (noticeBanner) {
+          noticeBanner.style.display = 'flex';
+          requestAnimationFrame(() => {
+            noticeBanner.classList.add('visible');
+          });
+          noticeBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Auto-dismiss exactly after 5 seconds (5000 ms) as requested
+          setTimeout(() => {
+            noticeBanner.classList.remove('visible');
+            setTimeout(() => {
+              noticeBanner.style.display = 'none';
+            }, 400);
+          }, 5000);
+        }
+
+        showToast('Opinión registrada. Pendiente de moderación por el administrador.');
+      }, 1200);
 
     } catch (err) {
       showReviewAlert(err.message, 'error');
@@ -1156,7 +1164,9 @@ function initCookieBanner() {
 function formatDate(isoString) {
   if (!isoString) return '';
   try {
-    const d = new Date(isoString);
+    const safeStr = typeof isoString === 'string' ? isoString.replace(' ', 'T') : isoString;
+    const d = new Date(safeStr);
+    if (isNaN(d.getTime())) return '';
     return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   } catch (e) {
     return '';
