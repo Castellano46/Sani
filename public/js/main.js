@@ -887,15 +887,16 @@ async function loadReviews() {
 
       return `
         <article class="review-card">
-          <div class="review-header">
-            <div class="review-author-wrap">
-              <div class="review-avatar">${initial}</div>
-              <div>
-                <span class="review-author">${r.author_name}</span>
+          <div class="review-card-top">
+            <div class="review-avatar">${initial}</div>
+            <div class="review-user-info">
+              <span class="review-author">${r.author_name}</span>
+              <div class="review-sub-info">
                 <span class="review-verified-badge">✓ Cliente Verificado</span>
+                <span class="review-date-sep">·</span>
+                <span class="review-date">${dateStr}</span>
               </div>
             </div>
-            <span class="review-date">${dateStr}</span>
           </div>
           <div class="review-stars">${stars}</div>
           <p class="review-comment">"${r.comment}"</p>
