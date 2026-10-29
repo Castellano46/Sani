@@ -6,9 +6,9 @@
   <title>Panel de Administración Profesional | Sani Instalaciones</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="/img/logo.png">
-  <link rel="stylesheet" href="/css/variables.css?v=20261028_5">
-  <link rel="stylesheet" href="/css/main.css?v=20261028_5">
-  <link rel="stylesheet" href="/css/admin.css?v=20261028_5">
+  <link rel="stylesheet" href="/css/variables.css?v=20261029_3">
+  <link rel="stylesheet" href="/css/main.css?v=20261029_3">
+  <link rel="stylesheet" href="/css/admin.css?v=20261029_3">
 </head>
 <body class="admin-body">
 
@@ -58,22 +58,24 @@
         <div class="admin-header-titles">
           <span class="brand-title">Sani Instalaciones</span>
           <span class="brand-status-pill">
-            <span class="status-dot-pulse"></span> Sistema en línea
+            <span class="status-dot-pulse"></span> <span class="status-text">Sistema en línea</span>
           </span>
         </div>
       </div>
 
       <div class="admin-user-nav">
-        <a href="/" target="_blank" rel="noopener" class="btn btn-sm btn-outline-light">
+        <a href="/" target="_blank" rel="noopener" class="btn btn-sm btn-outline-light btn-view-public" title="Ver Web Pública">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          Ver Web Pública
+          <span class="nav-text-full">Ver Web Pública</span>
+          <span class="nav-text-short">Web</span>
         </a>
         <div class="admin-badge">
-          <span>👤 Administrador: <strong id="admin-display-username">admin</strong></span>
+          <span>👤 <span class="badge-role-text">Administrador: </span><strong id="admin-display-username">admin</strong></span>
         </div>
         <button id="btn-admin-logout" class="btn-admin-logout" title="Cerrar sesión actual">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          Cerrar Sesión
+          <span class="nav-text-full">Cerrar Sesión</span>
+          <span class="nav-text-short">Salir</span>
         </button>
       </div>
     </header>
