@@ -480,13 +480,13 @@ function renderCharts(stats) {
 
         const period = adminState.currentChartPeriod || 'monthly';
         const trendsSource = adminState.activityTrends || stats?.activityTrends || {};
-        const fallbackMonthly = stats?.monthlyTrends || {
+        const emptyTrend = {
           labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
-          visits: [320, 480, 610, 540, 720, 890],
-          whatsappContacts: [18, 29, 41, 35, 52, 68]
+          visits: [0, 0, 0, 0, 0, 0],
+          whatsappContacts: [0, 0, 0, 0, 0, 0]
         };
 
-        const currentTrend = trendsSource[period] || fallbackMonthly;
+        const currentTrend = trendsSource[period] || emptyTrend;
 
         adminState.charts.activity = new Chart(ctxActivity, {
           type: 'line',
@@ -597,9 +597,9 @@ window.changeChartPeriod = function(period) {
 
   // Subtitle update map for clear user feedback
   const subtitleMap = {
-    weekly: 'Evolución de interacciones y solicitudes de presupuesto en los últimos 7 días',
-    monthly: 'Evolución de interacciones y solicitudes de presupuesto en los últimos 6 meses',
-    yearly: 'Evolución anual de interacciones globales y solicitudes de presupuesto'
+    weekly: 'Registro en tiempo real de visitas y contactos en los últimos 7 días',
+    monthly: 'Registro en tiempo real de visitas y contactos en los últimos 6 meses',
+    yearly: 'Registro anual acumulado de visitas y contactos reales'
   };
 
   const subtitleEl = document.getElementById('chart-activity-subtitle');
@@ -607,24 +607,7 @@ window.changeChartPeriod = function(period) {
     subtitleEl.textContent = subtitleMap[period];
   }
 
-  const trendsSource = adminState.activityTrends || {
-    weekly: {
-      labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-      visits: [42, 65, 58, 74, 91, 118, 96],
-      whatsappContacts: [4, 7, 5, 8, 11, 14, 9]
-    },
-    monthly: {
-      labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
-      visits: [320, 480, 610, 540, 720, 890],
-      whatsappContacts: [18, 29, 41, 35, 52, 68]
-    },
-    yearly: {
-      labels: ['2024', '2025', '2026 (Actual)'],
-      visits: [3400, 5800, 7950],
-      whatsappContacts: [240, 410, 580]
-    }
-  };
-
+  const trendsSource = adminState.activityTrends || {};
   const trendData = trendsSource[period];
   if (!trendData) return;
 
