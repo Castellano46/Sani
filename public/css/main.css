@@ -451,6 +451,25 @@ ul {
   color: var(--color-electric);
 }
 
+/* Legal & Subpages Back-to-Home Button */
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: all var(--transition-normal);
+}
+
+.btn-back-text-short {
+  display: none;
+}
+
+.btn-back-text-full {
+  display: inline;
+}
+
 /* ==========================================================================
    Hero Section
    ========================================================================== */
@@ -2655,6 +2674,107 @@ a[href^="tel:"] svg,
   }
 }
 
+/* ==========================================================================
+   Responsive Tables (e.g. Cookies Policy)
+   ========================================================================== */
+.table-responsive-wrapper {
+  margin: 1.8rem 0;
+  width: 100%;
+}
+
+.table-scroll-hint {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: var(--color-electric);
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(14, 165, 233, 0.08);
+  border-radius: var(--radius-sm);
+  border: 1px dashed rgba(14, 165, 233, 0.35);
+}
+
+.table-scroll-hint svg {
+  flex-shrink: 0;
+  animation: pulse-horizontal 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse-horizontal {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+.table-responsive-inner {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: #ffffff;
+}
+
+.table-cookies {
+  width: 100%;
+  min-width: 580px;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.table-cookies th,
+.table-cookies td {
+  padding: 0.85rem 1.1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.table-cookies th {
+  background: #f8fafc;
+  color: var(--color-brand-blue);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table-cookies tbody tr:hover {
+  background: rgba(14, 165, 233, 0.03);
+}
+
+.table-cookies tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-cookies code {
+  background: #f1f5f9;
+  color: var(--color-brand-blue);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.84rem;
+  font-family: monospace;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.table-cookies .badge-tag {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  white-space: nowrap;
+}
+
 /* Mobile Devices & Small Tablets (Core Responsive Overhaul) */
 @media (max-width: 768px) {
   /* Layout & Containers (Zero Horizontal Overflow, Compact Vertical Heights) */
@@ -2703,6 +2823,74 @@ a[href^="tel:"] svg,
   
   .nav-toggle {
     display: flex;
+  }
+
+  .nav-container {
+    height: 70px;
+    gap: 0.65rem;
+  }
+
+  .brand-link {
+    gap: 0.65rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .brand-logo-img {
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.15;
+  }
+
+  .brand-tagline {
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+  }
+
+  /* Compact Back Button for Legal / Subpages Header */
+  .btn-back-home,
+  .site-header a.btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.82rem;
+    gap: 0.35rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .btn-back-text-full {
+    display: none;
+  }
+
+  .btn-back-text-short {
+    display: inline;
+  }
+
+  /* Responsive Table Overrides in Media Query */
+  .table-scroll-hint {
+    display: inline-flex;
+  }
+
+  .table-cookies th,
+  .table-cookies td {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.84rem;
   }
 
   /* Hero Section (No Horizontal Overflow & Compact 2-Col Badges) */
@@ -3848,6 +4036,30 @@ a[href^="tel:"] svg,
 @media (max-width: 360px) {
   .container {
     padding: 0 0.65rem;
+  }
+
+  .nav-container {
+    height: 66px;
+    gap: 0.45rem;
+  }
+
+  .brand-logo-img {
+    height: 35px;
+  }
+
+  .brand-name {
+    font-size: 0.94rem;
+  }
+
+  .brand-tagline {
+    font-size: 0.54rem;
+  }
+
+  .btn-back-home,
+  .site-header a.btn {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.76rem;
+    gap: 0.25rem;
   }
 
   .hero-title {

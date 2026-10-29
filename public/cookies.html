@@ -6,8 +6,8 @@
   <title>Política de Cookies | Sani Instalaciones</title>
   <meta name="description" content="Información sobre las cookies técnicas y de navegación empleadas en el sitio web de Sani Instalaciones.">
   <link rel="icon" type="image/png" href="/img/logo.png">
-  <link rel="stylesheet" href="/css/variables.css">
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/variables.css?v=20261029_3">
+  <link rel="stylesheet" href="/css/main.css?v=20261029_3">
   <style>
     .legal-content {
       background: #ffffff;
@@ -34,35 +34,118 @@
       line-height: 1.7;
       margin-bottom: 1rem;
     }
+    .table-responsive-wrapper {
+      margin: 1.8rem 0;
+      width: 100%;
+    }
+    .table-scroll-hint {
+      display: none;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      color: var(--color-brand-blue);
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      padding: 0.4rem 0.75rem;
+      background: rgba(14, 165, 233, 0.08);
+      border-radius: var(--radius-sm);
+      border: 1px dashed rgba(14, 165, 233, 0.35);
+    }
+    .table-scroll-hint svg {
+      flex-shrink: 0;
+      animation: pulse-horizontal 1.8s infinite ease-in-out;
+    }
+    @keyframes pulse-horizontal {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(4px); }
+    }
+    .table-responsive-inner {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      background: #ffffff;
+    }
     .table-cookies {
       width: 100%;
+      min-width: 580px;
       border-collapse: collapse;
-      margin: 1.5rem 0;
+      margin: 0;
     }
     .table-cookies th, .table-cookies td {
-      border: 1px solid var(--color-border);
-      padding: 0.75rem 1rem;
+      border: none;
+      border-bottom: 1px solid var(--color-border);
+      padding: 0.85rem 1.1rem;
       text-align: left;
       font-size: 0.9rem;
+      vertical-align: middle;
     }
     .table-cookies th {
-      background: #f1f5f9;
+      background: #f8fafc;
       color: var(--color-brand-blue);
       font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 2px solid var(--color-border);
+      white-space: nowrap;
+    }
+    .table-cookies tbody tr:hover {
+      background: rgba(14, 165, 233, 0.03);
+    }
+    .table-cookies tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .table-cookies code {
+      background: #f1f5f9;
+      color: var(--color-brand-blue);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-xs);
+      font-size: 0.84rem;
+      font-family: monospace;
+      font-weight: 600;
+      border: 1px solid #e2e8f0;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .badge-tag {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      white-space: nowrap;
+    }
+    @media (max-width: 768px) {
+      .table-scroll-hint {
+        display: inline-flex;
+      }
+      .table-cookies th, .table-cookies td {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.84rem;
+      }
     }
   </style>
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-container">
-      <a href="/" class="brand-link">
+      <a href="/" class="brand-link" aria-label="Sani Instalaciones - Inicio">
         <img src="/img/logo.png" alt="Logo Sani Instalaciones" class="brand-logo-img">
         <div class="brand-text">
           <span class="brand-name">Sani Instalaciones</span>
           <span class="brand-tagline">Electricidad · Fontanería · Suelo Radiante</span>
         </div>
       </a>
-      <a href="/" class="btn btn-sm btn-outline">← Volver al Inicio</a>
+      <a href="/" class="btn btn-sm btn-outline btn-back-home" aria-label="Volver al Inicio">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span class="btn-back-text-full">Volver al Inicio</span>
+        <span class="btn-back-text-short">Inicio</span>
+      </a>
     </div>
   </header>
 
@@ -76,30 +159,38 @@
         <p>Una cookie es un pequeño fichero de texto que los sitios web descargan en su navegador cuando los visita. Permiten recordar sus preferencias técnicas de navegación para visitas futuras.</p>
 
         <h2>2. Cookies utilizadas en este sitio web</h2>
-        <table class="table-cookies">
-          <thead>
-            <tr>
-              <th>Cookie</th>
-              <th>Tipo</th>
-              <th>Finalidad</th>
-              <th>Duración</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>sani_cookie_consent</code></td>
-              <td>Técnica</td>
-              <td>Guarda la preferencia del usuario respecto a la aceptación del banner de cookies.</td>
-              <td>Persistente (LocalStorage)</td>
-            </tr>
-            <tr>
-              <td><code>sani_admin_session</code></td>
-              <td>Técnica / Sesión</td>
-              <td>Mantiene la autenticación segura del administrador en el panel privado mediante cookie HTTP-Only.</td>
-              <td>7 días</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive-wrapper">
+          <div class="table-scroll-hint">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8L22 12L18 16"/><path d="M6 8L2 12L6 16"/><path d="M2 12H22"/></svg>
+            <span>Desliza horizontalmente para ver la tabla completa</span>
+          </div>
+          <div class="table-responsive-inner">
+            <table class="table-cookies">
+              <thead>
+                <tr>
+                  <th>Cookie</th>
+                  <th>Tipo</th>
+                  <th>Finalidad</th>
+                  <th>Duración</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>sani_cookie_consent</code></td>
+                  <td><span class="badge-tag">Técnica</span></td>
+                  <td>Guarda la preferencia del usuario respecto a la aceptación del banner de cookies.</td>
+                  <td>Persistente (LocalStorage)</td>
+                </tr>
+                <tr>
+                  <td><code>sani_admin_session</code></td>
+                  <td><span class="badge-tag">Técnica / Sesión</span></td>
+                  <td>Mantiene la autenticación segura del administrador en el panel privado mediante cookie HTTP-Only.</td>
+                  <td>7 días</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
         <h2>3. Cómo gestionar o deshabilitar cookies en su navegador</h2>
         <p>Usted puede permitir, bloquear o eliminar las cookies instaladas en su dispositivo mediante la configuración de las opciones de su navegador web (Chrome, Firefox, Safari, Edge). Tenga en cuenta que si bloquea las cookies técnicas, ciertas funciones del sitio web podrían no funcionar adecuadamente.</p>
