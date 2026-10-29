@@ -79,6 +79,7 @@ app.use('/api/services', require('./routes/services'));
 app.use('/api/gallery', require('./routes/gallery'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/settings', require('./routes/settings'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 // Clean URL Page Routes
 app.get('/admin', (req, res) => {

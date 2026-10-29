@@ -391,12 +391,34 @@ function renderRecentActivity(activity) {
   const container = document.getElementById('recent-activity-feed');
   if (!container) return;
 
-  if (!activity || (!activity.reviews?.length && !activity.works?.length)) {
+  if (!activity || (!activity.reviews?.length && !activity.works?.length && !activity.contacts?.length)) {
     container.innerHTML = '<p style="color: #64748b; font-size: 0.9rem; padding: 0.5rem 0;">No hay actividad reciente registrada.</p>';
     return;
   }
 
   const items = [];
+
+  if (activity.contacts) {
+    activity.contacts.forEach(c => {
+      const dateStr = new Date(c.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      const isWa = c.event_type === 'whatsapp_contact';
+      const label = isWa ? 'Consulta directa por WhatsApp' : 'Llamada telefónica iniciada';
+      const icon = isWa ? '🟢' : '📞';
+      const badgeText = isWa ? 'WhatsApp' : 'Llamada';
+      items.push({
+        date: new Date(c.created_at),
+        html: `
+          <div class="activity-item">
+            <div>
+              ${icon} <span class="activity-user">${label}</span>
+              <span class="status-badge status-approved" style="margin-left: 0.5rem; font-size: 0.7rem;">${badgeText}</span>
+            </div>
+            <span class="activity-date">${dateStr}</span>
+          </div>
+        `
+      });
+    });
+  }
 
   if (activity.reviews) {
     activity.reviews.forEach(r => {

@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initReviewsSystem();
   initCopyPhone();
   initCookieBanner();
+  initAnalyticsTracker();
 
   // Load backend data
   loadSettings();
@@ -1178,4 +1179,59 @@ function formatDate(isoString) {
 function escapeJsString(str) {
   if (!str) return '';
   return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+/* ==========================================================================
+   Analytics Telemetry Tracker (Anonymous, Non-blocking, Privacy-Friendly)
+   ========================================================================== */
+function trackAnalytics(eventType) {
+  try {
+    const payload = JSON.stringify({
+      event_type: eventType,
+      page: window.location.pathname || '/'
+    });
+
+    if (navigator.sendBeacon) {
+      const blob = new Blob([payload], { type: 'application/json' });
+      navigator.sendBeacon('/api/analytics/track', blob);
+    } else {
+      fetch('/api/analytics/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true
+      }).catch(() => {});
+    }
+  } catch (err) {
+    // Non-blocking and silent
+  }
+}
+
+function initAnalyticsTracker() {
+  // 1. Record 1 visit per browser session
+  try {
+    if (!sessionStorage.getItem('sani_session_tracked')) {
+      sessionStorage.setItem('sani_session_tracked', '1');
+      trackAnalytics('visit');
+    }
+  } catch (e) {
+    trackAnalytics('visit');
+  }
+
+  // 2. Global click interception for WhatsApp & Phone calls
+  document.addEventListener('click', (e) => {
+    // A. WhatsApp triggers
+    const waTrigger = e.target.closest('a[href*="whatsapp.com"], a[href*="wa.me"], #floating-wa-btn, #wa-contact-send-btn, #wa-modal-submit-btn, .btn-whatsapp');
+    if (waTrigger) {
+      trackAnalytics('whatsapp_contact');
+      return;
+    }
+
+    // B. Direct Call triggers
+    const callTrigger = e.target.closest('a[href^="tel:"], .phone-tel-link');
+    if (callTrigger) {
+      trackAnalytics('phone_call');
+      return;
+    }
+  }, { passive: true });
 }

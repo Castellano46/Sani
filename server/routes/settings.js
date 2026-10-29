@@ -169,27 +169,118 @@ router.get('/stats', requireAuth, (req, res) => {
       LIMIT 5
     `).all();
 
-    // Chart trend data (timeline metrics for weekly, monthly and yearly activity and contacts)
+    const recentContacts = db.prepare(`
+      SELECT id, event_type, page, created_at
+      FROM analytics_events
+      WHERE event_type IN ('whatsapp_contact', 'phone_call')
+      ORDER BY id DESC
+      LIMIT 5
+    `).all();
+
+    // Real-Time Analytics Calculation from SQLite table 'analytics_events'
+    // 1. Weekly (Last 7 days ending with today)
+    const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const weeklyLabels = [];
+    const weeklyVisits = [];
+    const weeklyContacts = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}-${mm}-${dd}`;
+
+      const dayLabel = daysOfWeek[d.getDay()];
+      weeklyLabels.push(dayLabel);
+
+      const visitsCount = db.prepare(`
+        SELECT COUNT(*) as count FROM analytics_events 
+        WHERE event_type = 'visit' AND date(created_at, 'localtime') = ?
+      `).get(dateStr).count;
+
+      const contactsCount = db.prepare(`
+        SELECT COUNT(*) as count FROM analytics_events 
+        WHERE (event_type = 'whatsapp_contact' OR event_type = 'phone_call') AND date(created_at, 'localtime') = ?
+      `).get(dateStr).count;
+
+      weeklyVisits.push(visitsCount);
+      weeklyContacts.push(contactsCount);
+    }
+
+    // 2. Monthly (Last 6 months ending with current month)
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const monthlyLabels = [];
+    const monthlyVisits = [];
+    const monthlyContacts = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(1); // Prevent 31st overflow
+      d.setMonth(d.getMonth() - i);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yearMonth = `${yyyy}-${mm}`;
+
+      monthlyLabels.push(monthNames[d.getMonth()]);
+
+      const visitsCount = db.prepare(`
+        SELECT COUNT(*) as count FROM analytics_events 
+        WHERE event_type = 'visit' AND strftime('%Y-%m', created_at, 'localtime') = ?
+      `).get(yearMonth).count;
+
+      const contactsCount = db.prepare(`
+        SELECT COUNT(*) as count FROM analytics_events 
+        WHERE (event_type = 'whatsapp_contact' OR event_type = 'phone_call') AND strftime('%Y-%m', created_at, 'localtime') = ?
+      `).get(yearMonth).count;
+
+      monthlyVisits.push(visitsCount);
+      monthlyContacts.push(contactsCount);
+    }
+
+    // 3. Yearly (Last 3 years ending with current year)
+    const currentYear = new Date().getFullYear();
+    const yearlyLabels = [String(currentYear - 2), String(currentYear - 1), `${currentYear} (Actual)`];
+    const yearlyVisits = [];
+    const yearlyContacts = [];
+
+    [currentYear - 2, currentYear - 1, currentYear].forEach(yr => {
+      const visitsCount = db.prepare(`
+        SELECT COUNT(*) as count FROM analytics_events 
+        WHERE event_type = 'visit' AND strftime('%Y', created_at, 'localtime') = ?
+      `).get(String(yr)).count;
+
+      const contactsCount = db.prepare(`
+        SELECT COUNT(*) as count FROM analytics_events 
+        WHERE (event_type = 'whatsapp_contact' OR event_type = 'phone_call') AND strftime('%Y', created_at, 'localtime') = ?
+      `).get(String(yr)).count;
+
+      yearlyVisits.push(visitsCount);
+      yearlyContacts.push(contactsCount);
+    });
+
     const activityTrends = {
       weekly: {
-        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-        visits: [42, 65, 58, 74, 91, 118, 96],
-        whatsappContacts: [4, 7, 5, 8, 11, 14, 9],
-        budgetsRequested: [2, 4, 3, 5, 7, 9, 6]
+        labels: weeklyLabels,
+        visits: weeklyVisits,
+        whatsappContacts: weeklyContacts
       },
       monthly: {
-        labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
-        visits: [320, 480, 610, 540, 720, 890],
-        whatsappContacts: [18, 29, 41, 35, 52, 68],
-        budgetsRequested: [11, 19, 26, 22, 34, 45]
+        labels: monthlyLabels,
+        visits: monthlyVisits,
+        whatsappContacts: monthlyContacts
       },
       yearly: {
-        labels: ['2024', '2025', '2026 (Actual)'],
-        visits: [3400, 5800, 7950],
-        whatsappContacts: [240, 410, 580],
-        budgetsRequested: [150, 270, 390]
+        labels: yearlyLabels,
+        visits: yearlyVisits,
+        whatsappContacts: yearlyContacts
       }
     };
+
+    // Overall analytics totals
+    const totalVisits = db.prepare("SELECT COUNT(*) as count FROM analytics_events WHERE event_type = 'visit'").get().count;
+    const totalContacts = db.prepare("SELECT COUNT(*) as count FROM analytics_events WHERE event_type IN ('whatsapp_contact', 'phone_call')").get().count;
 
     res.json({
       stats: {
@@ -204,9 +295,12 @@ router.get('/stats', requireAuth, (req, res) => {
         activeServices,
         totalServices,
         servicesByCategory,
+        totalVisits,
+        totalContacts,
         recentActivity: {
           reviews: recentReviews,
-          works: recentWorks
+          works: recentWorks,
+          contacts: recentContacts
         },
         monthlyTrends: activityTrends.monthly,
         activityTrends
