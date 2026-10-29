@@ -212,90 +212,119 @@ function initDatabase() {
     console.log('[DB] Initial services seeded.');
   }
 
-  // Seed sample gallery items if table empty
-  const galleryCount = db.prepare('SELECT COUNT(*) as count FROM gallery').get().count;
-  if (galleryCount === 0) {
-    const initialGallery = [
-      {
-        title: 'Cuadro Eléctrico de Distribución',
-        category: 'electricidad',
-        description: 'Instalación y etiquetado de cuadro de protección general con protecciones magnetotérmicas y diferenciales de alta sensibilidad.',
-        image_url: '/uploads/electricidad-cuadro-general.jpg',
-        display_order: 1
-      },
-      {
-        title: 'Batería de Colectores de Fontanería',
-        category: 'fontaneria',
-        description: 'Montaje de colector con regulación independiente y tubería multicapa para distribución eficiente de agua fría y caliente sanitaria.',
-        image_url: '/uploads/fontaneria-colectores-multicapa.jpg',
-        display_order: 2
-      },
-      {
-        title: 'Sistema de Calefacción por Suelo Radiante',
-        category: 'suelo_radiante',
-        description: 'Tendido de circuitos de suelo radiante con placa de aislamiento térmico de alta densidad antes de la capa de mortero.',
-        image_url: '/uploads/suelo-radiante-instalacion.jpg',
-        display_order: 3
-      }
-    ];
+  // Ensure all 6 standard gallery items exist in database
+  const standardGallery = [
+    {
+      title: 'Cuadro Eléctrico de Distribución',
+      category: 'electricidad',
+      description: 'Instalación y etiquetado de cuadro de protección general con protecciones magnetotérmicas y diferenciales de alta sensibilidad.',
+      image_url: '/uploads/electricidad-cuadro-general.jpg',
+      display_order: 1
+    },
+    {
+      title: 'Batería de Colectores de Fontanería',
+      category: 'fontaneria',
+      description: 'Montaje de colector con regulación independiente y tubería multicapa para distribución eficiente de agua fría y caliente sanitaria.',
+      image_url: '/uploads/fontaneria-colectores-multicapa.jpg',
+      display_order: 2
+    },
+    {
+      title: 'Sistema de Calefacción por Suelo Radiante',
+      category: 'suelo_radiante',
+      description: 'Tendido de circuitos de suelo radiante con placa de aislamiento térmico de alta densidad antes de la capa de mortero.',
+      image_url: '/uploads/suelo-radiante-instalacion.jpg',
+      display_order: 3
+    },
+    {
+      title: 'Iluminación LED y Mecanismos de Diseño',
+      category: 'electricidad',
+      description: 'Instalación completa de focos LED empotrados de bajo consumo y serie de mecanismos modernos en vivienda unifamiliar.',
+      image_url: '/uploads/electricidad-iluminacion-led.jpg',
+      display_order: 4
+    },
+    {
+      title: 'Renovación de Fontanería en Baño',
+      category: 'fontaneria',
+      description: 'Instalación empotrada de grifería termostática, tuberías de cobre y multicapa, y saneamiento para plato de ducha.',
+      image_url: '/uploads/fontaneria-bano-ducha.jpg',
+      display_order: 5
+    },
+    {
+      title: 'Armario de Colectores y Termostatos Digitales',
+      category: 'suelo_radiante',
+      description: 'Montaje de armario de regulación de suelo radiante con actuadores electrotérmicos y bomba de circulación de alta eficiencia.',
+      image_url: '/uploads/suelo-radiante-colectores.jpg',
+      display_order: 6
+    }
+  ];
 
-    const insertGallery = db.prepare(`
-      INSERT INTO gallery (title, category, description, image_url, display_order)
-      VALUES (@title, @category, @description, @image_url, @display_order)
-    `);
+  const checkGalleryItem = db.prepare('SELECT id FROM gallery WHERE title = ?');
+  const insertGalleryItem = db.prepare(`
+    INSERT INTO gallery (title, category, description, image_url, display_order, status)
+    VALUES (@title, @category, @description, @image_url, @display_order, 'approved')
+  `);
 
-    const seedGallery = db.transaction((list) => {
-      for (const item of list) {
-        insertGallery.run(item);
-      }
-    });
-    seedGallery(initialGallery);
-    console.log('[DB] Initial gallery items seeded.');
-  }
+  standardGallery.forEach(item => {
+    const existing = checkGalleryItem.get(item.title);
+    if (!existing) {
+      insertGalleryItem.run(item);
+      console.log(`[DB] Standard gallery item ensured: ${item.title}`);
+    }
+  });
 
-  // Seed sample approved reviews if none approved exist
-  const approvedReviewsCount = db.prepare("SELECT COUNT(*) as count FROM reviews WHERE status = 'approved'").get().count;
-  if (approvedReviewsCount < 3) {
-    const initialReviews = [
-      {
-        author_name: 'Manuel García M.',
-        rating: 5,
-        comment: 'Excelente instalación de calefacción por suelo radiante en nuestra vivienda en Jamilena. Muy limpios, puntuales y de trato directo. El confort térmico este invierno ha sido increíble.',
-        status: 'approved'
-      },
-      {
-        author_name: 'Carmen Fuentes L.',
-        rating: 5,
-        comment: 'Nos renovaron todo el cuadro eléctrico general y la iluminación LED en Jaén. Gran profesionalidad, cumplimiento de normativa y rapidez. Recomendados al 100%.',
-        status: 'approved'
-      },
-      {
-        author_name: 'Antonio Morales R.',
-        rating: 5,
-        comment: 'Tuvimos una avería urgente de fontanería y atendieron de inmediato. Reparación limpia, materiales multicapa de calidad y precio muy honesto y claro.',
-        status: 'approved'
-      },
-      {
-        author_name: 'Francisco J. Nieto',
-        rating: 5,
-        comment: 'Instalación de fontanería completa y colectores independientes en vivienda unifamiliar. Da gusto tratar con un instalador que explica todo con transparencia y cumple los plazos.',
-        status: 'approved'
-      }
-    ];
+  // Ensure all 6 standard approved reviews exist in database
+  const standardReviews = [
+    {
+      author_name: 'Manuel García M.',
+      rating: 5,
+      comment: 'Excelente instalación de calefacción por suelo radiante en nuestra vivienda en Jamilena. Muy limpios, puntuales y de trato directo. El confort térmico este invierno ha sido increíble.',
+      status: 'approved'
+    },
+    {
+      author_name: 'Carmen Fuentes L.',
+      rating: 5,
+      comment: 'Nos renovaron todo el cuadro eléctrico general y la iluminación LED en Jaén. Gran profesionalidad, cumplimiento de normativa y rapidez. Recomendados al 100%.',
+      status: 'approved'
+    },
+    {
+      author_name: 'Antonio Morales R.',
+      rating: 5,
+      comment: 'Tuvimos una avería urgente de fontanería y atendieron de inmediato. Reparación limpia, materiales multicapa de calidad y precio muy honesto y claro.',
+      status: 'approved'
+    },
+    {
+      author_name: 'Francisco J. Nieto',
+      rating: 5,
+      comment: 'Instalación de fontanería completa y colectores independientes en vivienda unifamiliar. Da gusto tratar con un instalador que explica todo con transparencia y cumple los plazos.',
+      status: 'approved'
+    },
+    {
+      author_name: 'Elena Sánchez P.',
+      rating: 5,
+      comment: 'Muy satisfechos con la reforma integral de fontanería y electricidad en nuestro piso. Trabajo impecable, rápido y con materiales de primera calidad.',
+      status: 'approved'
+    },
+    {
+      author_name: 'Pedro L. (Jamilena)',
+      rating: 5,
+      comment: 'Excelente atención técnica y cercanía. Nos instalaron los termostatos y colectores de suelo radiante. Funcionamiento perfecto y trato inmejorable.',
+      status: 'approved'
+    }
+  ];
 
-    const insertReview = db.prepare(`
-      INSERT INTO reviews (author_name, rating, comment, status)
-      VALUES (@author_name, @rating, @comment, @status)
-    `);
+  const checkReviewItem = db.prepare('SELECT id FROM reviews WHERE author_name = ?');
+  const insertReviewItem = db.prepare(`
+    INSERT INTO reviews (author_name, rating, comment, status)
+    VALUES (@author_name, @rating, @comment, @status)
+  `);
 
-    const seedReviews = db.transaction((list) => {
-      for (const item of list) {
-        insertReview.run(item);
-      }
-    });
-    seedReviews(initialReviews);
-    console.log('[DB] Verified approved reviews seeded.');
-  }
+  standardReviews.forEach(r => {
+    const existing = checkReviewItem.get(r.author_name);
+    if (!existing) {
+      insertReviewItem.run(r);
+      console.log(`[DB] Standard review ensured: ${r.author_name}`);
+    }
+  });
 
   // 8. Seed baseline historical analytics events if table is empty
   const eventsCount = db.prepare('SELECT COUNT(*) as count FROM analytics_events').get().count;
