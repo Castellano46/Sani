@@ -260,6 +260,10 @@
                   <p class="card-section-subtitle" id="chart-activity-subtitle">Registro en tiempo real de visitas y solicitudes de contacto en los últimos meses</p>
                 </div>
                 <div class="chart-period-selector-wrap">
+                  <div class="chart-counters-strip">
+                    <span class="live-counter-pill" id="live-visits-counter" title="Total de visitas registradas">👁️ 0 Visitas</span>
+                    <span class="live-counter-pill live-counter-wa" id="live-contacts-counter" title="Total de contactos por WhatsApp o llamada">💬 0 Contactos</span>
+                  </div>
                   <select id="select-chart-period" class="badge-blue-pill-select" onchange="changeChartPeriod(this.value)" aria-label="Seleccionar periodo del gráfico">
                     <option value="weekly">Semanal</option>
                     <option value="monthly" selected>Mensual</option>
@@ -989,6 +993,6 @@
 
   <!-- Scripts -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <script src="/js/admin.js?v=20261028_5"></script>
+  <script src="/js/admin.js?v=20261029_5"></script>
 </body>
 </html>

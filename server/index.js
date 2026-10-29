@@ -1,4 +1,5 @@
 require('dotenv').config();
+process.env.TZ = process.env.TZ || 'Europe/Madrid';
 const path = require('path');
 const express = require('express');
 const helmet = require('helmet');
@@ -38,6 +39,7 @@ app.use(cors({
 
 // Parsing middleware
 app.use(express.json({ limit: '2mb' }));
+app.use(express.text({ type: ['text/plain', 'text/*'], limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(cookieParser(process.env.COOKIE_SECRET || 'sani_instalaciones_secure_cookie_secret_2026'));
 

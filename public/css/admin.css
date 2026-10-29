@@ -562,6 +562,35 @@ h1, h2, h3, h4, h5, h6 {
 .chart-period-selector-wrap {
   display: inline-flex;
   align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.chart-counters-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.live-counter-pill {
+  background: #f8fafc;
+  color: #1e293b;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-full);
+  border: 1px solid #cbd5e1;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.live-counter-wa {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
 }
 
 .badge-blue-pill-select {

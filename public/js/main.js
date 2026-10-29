@@ -652,6 +652,7 @@ function initWhatsAppBuilder() {
 
   // Send WhatsApp message button
   sendBtn?.addEventListener('click', () => {
+    trackAnalytics('whatsapp_contact');
     const finalMsg = buildFormattedMessage(
       appState.whatsappContact.reason,
       '',
@@ -753,6 +754,7 @@ function initWhatsAppModal() {
   });
 
   submitBtn?.addEventListener('click', () => {
+    trackAnalytics('whatsapp_contact');
     const finalMsg = buildFormattedMessage(
       appState.whatsappModal.reason,
       appState.whatsappModal.userName,
@@ -1191,38 +1193,41 @@ function trackAnalytics(eventType) {
       page: window.location.pathname || '/'
     });
 
-    if (navigator.sendBeacon) {
-      const blob = new Blob([payload], { type: 'application/json' });
-      navigator.sendBeacon('/api/analytics/track', blob);
-    } else {
-      fetch('/api/analytics/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload,
-        keepalive: true
-      }).catch(() => {});
-    }
+    // Guaranteed reliable tracking across all devices (Mobile iOS/Android + PC)
+    // Sends via POST body and query string fallback so no event is ever dropped
+    fetch(`/api/analytics/track?event_type=${encodeURIComponent(eventType)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true
+    }).catch(() => {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(`/api/analytics/track?event_type=${encodeURIComponent(eventType)}`, payload);
+      }
+    });
   } catch (err) {
     // Non-blocking and silent
   }
 }
 
 function initAnalyticsTracker() {
-  // 1. Record 1 visit per browser session
+  // 1. Record visit (debounced by 15s to allow real testing while preventing rapid double-click/spam)
   try {
-    if (!sessionStorage.getItem('sani_session_tracked')) {
-      sessionStorage.setItem('sani_session_tracked', '1');
+    const last = sessionStorage.getItem('sani_last_visit_ts');
+    const now = Date.now();
+    if (!last || (now - parseInt(last, 10)) > 15000) {
+      sessionStorage.setItem('sani_last_visit_ts', now.toString());
       trackAnalytics('visit');
     }
   } catch (e) {
     trackAnalytics('visit');
   }
 
-  // 2. Global click interception for WhatsApp & Phone calls
+  // 2. Global click interception for direct phone calls and direct WhatsApp links
   document.addEventListener('click', (e) => {
-    // A. WhatsApp triggers
-    const waTrigger = e.target.closest('a[href*="whatsapp.com"], a[href*="wa.me"], #floating-wa-btn, #wa-contact-send-btn, #wa-modal-submit-btn, .btn-whatsapp');
-    if (waTrigger) {
+    // A. Direct WhatsApp links (if someone clicked an <a> directly pointing to wa.me or whatsapp)
+    const directWa = e.target.closest('a[href*="whatsapp.com"], a[href*="wa.me"]');
+    if (directWa) {
       trackAnalytics('whatsapp_contact');
       return;
     }

@@ -330,6 +330,12 @@ async function loadDashboardStats() {
     if (totalWorksEl) totalWorksEl.textContent = stats.totalWorks;
     if (activeSrvEl) activeSrvEl.textContent = stats.activeServices;
 
+    // Live Counters for Real Analytics
+    const liveVisitsEl = document.getElementById('live-visits-counter');
+    const liveContactsEl = document.getElementById('live-contacts-counter');
+    if (liveVisitsEl) liveVisitsEl.textContent = `👁️ ${stats.totalVisits || 0} Visitas`;
+    if (liveContactsEl) liveContactsEl.textContent = `💬 ${stats.totalContacts || 0} Contactos`;
+
     // Badges in sidebar
     const badgeEl = document.getElementById('sidebar-pending-badge');
     if (badgeEl) {
