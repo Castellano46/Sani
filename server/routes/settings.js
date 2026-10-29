@@ -169,12 +169,26 @@ router.get('/stats', requireAuth, (req, res) => {
       LIMIT 5
     `).all();
 
-    // Chart trend data (realistic timeline metrics for monthly activity and contacts)
-    const monthlyTrends = {
-      labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
-      visits: [320, 480, 610, 540, 720, 890],
-      whatsappContacts: [18, 29, 41, 35, 52, 68],
-      budgetsRequested: [11, 19, 26, 22, 34, 45]
+    // Chart trend data (timeline metrics for weekly, monthly and yearly activity and contacts)
+    const activityTrends = {
+      weekly: {
+        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+        visits: [42, 65, 58, 74, 91, 118, 96],
+        whatsappContacts: [4, 7, 5, 8, 11, 14, 9],
+        budgetsRequested: [2, 4, 3, 5, 7, 9, 6]
+      },
+      monthly: {
+        labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
+        visits: [320, 480, 610, 540, 720, 890],
+        whatsappContacts: [18, 29, 41, 35, 52, 68],
+        budgetsRequested: [11, 19, 26, 22, 34, 45]
+      },
+      yearly: {
+        labels: ['2024', '2025', '2026 (Actual)'],
+        visits: [3400, 5800, 7950],
+        whatsappContacts: [240, 410, 580],
+        budgetsRequested: [150, 270, 390]
+      }
     };
 
     res.json({
@@ -194,7 +208,8 @@ router.get('/stats', requireAuth, (req, res) => {
           reviews: recentReviews,
           works: recentWorks
         },
-        monthlyTrends
+        monthlyTrends: activityTrends.monthly,
+        activityTrends
       }
     });
   } catch (err) {

@@ -15,6 +15,8 @@ const adminState = {
   settings: {},
   currentReviewFilter: '',
   currentGalleryFilter: '',
+  currentChartPeriod: 'monthly',
+  activityTrends: null,
   charts: {
     activity: null,
     categories: null
@@ -364,6 +366,19 @@ async function loadDashboardStats() {
     // Render Recent Activity Feed
     renderRecentActivity(stats.recentActivity);
 
+    // Store activity trends in state
+    if (stats.activityTrends) {
+      adminState.activityTrends = stats.activityTrends;
+    } else if (stats.monthlyTrends) {
+      adminState.activityTrends = { monthly: stats.monthlyTrends };
+    }
+
+    // Sync select dropdown if exists
+    const periodSelect = document.getElementById('select-chart-period');
+    if (periodSelect && adminState.currentChartPeriod) {
+      periodSelect.value = adminState.currentChartPeriod;
+    }
+
     // Initialize/Update Charts
     renderCharts(stats);
 
@@ -441,20 +456,24 @@ function renderCharts(stats) {
           try { adminState.charts.activity.destroy(); } catch (e) {}
         }
 
-        const trends = stats.monthlyTrends || {
+        const period = adminState.currentChartPeriod || 'monthly';
+        const trendsSource = adminState.activityTrends || stats?.activityTrends || {};
+        const fallbackMonthly = stats?.monthlyTrends || {
           labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
           visits: [320, 480, 610, 540, 720, 890],
           whatsappContacts: [18, 29, 41, 35, 52, 68]
         };
 
+        const currentTrend = trendsSource[period] || fallbackMonthly;
+
         adminState.charts.activity = new Chart(ctxActivity, {
           type: 'line',
           data: {
-            labels: trends.labels,
+            labels: currentTrend.labels,
             datasets: [
               {
                 label: 'Visitas a la Web',
-                data: trends.visits,
+                data: currentTrend.visits,
                 borderColor: '#0284c7',
                 backgroundColor: 'rgba(2, 132, 199, 0.1)',
                 borderWidth: 2.5,
@@ -464,7 +483,7 @@ function renderCharts(stats) {
               },
               {
                 label: 'Contactos por WhatsApp / Teléfono',
-                data: trends.whatsappContacts,
+                data: currentTrend.whatsappContacts,
                 borderColor: '#eab308',
                 backgroundColor: 'rgba(234, 179, 8, 0.15)',
                 borderWidth: 2.5,
@@ -506,7 +525,7 @@ function renderCharts(stats) {
           try { adminState.charts.categories.destroy(); } catch (e) {}
         }
 
-        const catData = stats.worksByCategory || {
+        const catData = stats?.worksByCategory || {
           electricidad: 2,
           fontaneria: 2,
           suelo_radiante: 2,
@@ -539,15 +558,63 @@ function renderCharts(stats) {
         });
       }
     } else {
-      drawCanvasFallback(ctxActivity, 'Evolución de Actividad Mensual');
+      drawCanvasFallback(ctxActivity, 'Evolución de Actividad');
       drawCanvasFallback(ctxCategories, 'Distribución de Trabajos');
     }
   } catch (chartErr) {
     console.warn('Chart render fallback triggered:', chartErr);
-    drawCanvasFallback(ctxActivity, 'Evolución de Actividad Mensual');
+    drawCanvasFallback(ctxActivity, 'Evolución de Actividad');
     drawCanvasFallback(ctxCategories, 'Distribución de Trabajos');
   }
 }
+
+// Interactive Period Selector for Activity Chart
+window.changeChartPeriod = function(period) {
+  if (!period) return;
+  adminState.currentChartPeriod = period;
+
+  // Subtitle update map for clear user feedback
+  const subtitleMap = {
+    weekly: 'Evolución de interacciones y solicitudes de presupuesto en los últimos 7 días',
+    monthly: 'Evolución de interacciones y solicitudes de presupuesto en los últimos 6 meses',
+    yearly: 'Evolución anual de interacciones globales y solicitudes de presupuesto'
+  };
+
+  const subtitleEl = document.getElementById('chart-activity-subtitle');
+  if (subtitleEl && subtitleMap[period]) {
+    subtitleEl.textContent = subtitleMap[period];
+  }
+
+  const trendsSource = adminState.activityTrends || {
+    weekly: {
+      labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+      visits: [42, 65, 58, 74, 91, 118, 96],
+      whatsappContacts: [4, 7, 5, 8, 11, 14, 9]
+    },
+    monthly: {
+      labels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
+      visits: [320, 480, 610, 540, 720, 890],
+      whatsappContacts: [18, 29, 41, 35, 52, 68]
+    },
+    yearly: {
+      labels: ['2024', '2025', '2026 (Actual)'],
+      visits: [3400, 5800, 7950],
+      whatsappContacts: [240, 410, 580]
+    }
+  };
+
+  const trendData = trendsSource[period];
+  if (!trendData) return;
+
+  if (adminState.charts.activity) {
+    adminState.charts.activity.data.labels = trendData.labels;
+    adminState.charts.activity.data.datasets[0].data = trendData.visits;
+    adminState.charts.activity.data.datasets[1].data = trendData.whatsappContacts;
+    adminState.charts.activity.update();
+  } else {
+    renderCharts({ activityTrends: trendsSource });
+  }
+};
 
 function drawCanvasFallback(canvas, title) {
   if (!canvas) return;

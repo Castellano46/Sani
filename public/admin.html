@@ -257,9 +257,15 @@
               <div class="card-header-flex">
                 <div>
                   <h3 class="card-section-title">📈 Actividad Estimada y Contactos por WhatsApp</h3>
-                  <p class="card-section-subtitle">Evolución de interacciones y solicitudes de presupuesto en los últimos meses</p>
+                  <p class="card-section-subtitle" id="chart-activity-subtitle">Evolución de interacciones y solicitudes de presupuesto en los últimos meses</p>
                 </div>
-                <span class="badge-blue-pill">Mensual</span>
+                <div class="chart-period-selector-wrap">
+                  <select id="select-chart-period" class="badge-blue-pill-select" onchange="changeChartPeriod(this.value)" aria-label="Seleccionar periodo del gráfico">
+                    <option value="weekly">Semanal</option>
+                    <option value="monthly" selected>Mensual</option>
+                    <option value="yearly">Anual</option>
+                  </select>
+                </div>
               </div>
               <div class="chart-canvas-container">
                 <canvas id="chart-activity-trends" height="230"></canvas>
